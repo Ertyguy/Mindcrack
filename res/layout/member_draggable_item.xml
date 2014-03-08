@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:mstb="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/member_list_item" 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp" 
+    android:background="@color/dark_grey"
+    android:layout_marginBottom="1dp">
+
+	  <ImageView
+	      android:id="@id/drag_handle"
+	      android:layout_width="50dp"
+	      android:layout_height="40dp"
+	      android:layout_alignParentLeft="true"
+	      android:layout_centerVertical="true"
+	      android:scaleType="fitCenter"
+	      android:src="@drawable/drag" />
+
+    <ImageView
+        android:id="@+id/member_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/drag_handle"
+        android:padding="2dp"
+        android:src="@drawable/mindcrack" />
+
+    <TextView
+        android:id="@+id/member_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/member_state"
+        android:layout_toRightOf="@id/member_icon"
+        android:text="name"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+    <com.edaviessmith.mindcrack.util.MemberStateToggleButtons
+        android:id="@+id/member_state"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
+    
+</RelativeLayout>

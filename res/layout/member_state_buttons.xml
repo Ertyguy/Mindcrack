@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:layout_margin="0dip"
+    android:background="@drawable/button_section_shape"
+    android:orientation="horizontal"
+    android:padding="0dip" >
+
+    <Button
+	    android:minHeight="7dip"
+        android:id="@+id/button_yes"
+      	android:layout_width="0dip"
+      	android:layout_weight="1"
+      	android:layout_height="wrap_content"
+      	android:layout_marginTop="2dip"
+      	android:layout_marginBottom="2dip"
+      	android:layout_marginLeft="2dip"
+      	android:background="@drawable/remove"
+      	android:padding="0dip" />
+    <Button
+	    android:minHeight="7dip"
+        android:id="@+id/button_no"
+      	android:layout_width="0dip"
+      	android:layout_weight="1"
+      	android:layout_height="wrap_content"
+      	android:layout_marginTop="2dip"
+      	android:layout_marginBottom="2dip"
+		android:background="@drawable/show"
+      	android:padding="0dip" />
+    <Button
+	    android:minHeight="7dip"
+        android:id="@+id/button_na"
+      	android:layout_width="0dip"
+      	android:layout_weight="1"
+      	android:layout_height="wrap_content"
+      	android:layout_marginTop="2dip"
+      	android:layout_marginBottom="2dip"
+      	android:layout_marginRight="2dip"
+      	android:background="@drawable/star"
+      	android:padding="0dip" />
+</LinearLayout>

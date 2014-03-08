@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="mindcrack">Mindcrack</string>
+    <string name="tab_page_num">Page: </string>
+    
+    <string name="youtube_title">Youtube</string>
+    <string name="twitter_title">Twitter</string>
+    <string name="about_title">About</string>
+    <string name="settings_title">Settings</string>
+    <string name="managemembers_title">Manage Members</string>
+    
+    <string name="about_ver">Version: </string>
+    <string name="about_ver_num">1.8</string>
+    <string name="about_contact">Contact Me: </string>
+    <string name="about_think">Let the developer know what you think or point out any bugs you find</string>
+    <string name="about_rate">Rate App: </string>
+    <string name="about_support">Support this app by giving it a good rating, if you\'re having issues, send me an email. And I will do my best to fix what\'s broken</string>
+    
+    
+    <string name="settings_notification">Notifications:</string>
+	<string name="settings_mobile">On Mobile search every:</string>
+	<string name="settings_wifi">On Wifi search every:</string>
+	<string name="settings_boot">Start notifications when phone turns on:</string>
+	<string name="settings_logo">Use members face instead of logo:</string>
+	<string name="settings_mobile_hires">On Mobile load HiRes images</string>
+	<string name="settings_wifi_hires">On Wifi load HiRes images</string>
+    
+    <string name="loading_title">Loading Title</string>
+    <string name="loading_date">Loading Date</string>
+    <string name="loading_description">Loading Date</string>
+    <string name="loading_youtube">Searching Youtube for new videos</string>
+    <string name="loading_youtube_failed">Could not connect to Youtube</string>
+    <string name="save_changes">Save Changes</string>
+    
+ 	
+    
+    
+    <string-array name="timings_array">
+		<item>Never</item>
+		<item>15 Minutes</item>
+		<item>30 Minutes</item>
+		<item>1 Hour</item>
+		<item>3 Hours</item>
+		<item>6 Hours</item>
+		<item>12 Hours</item>
+		<item>Daily</item>
+	</string-array>
+</resources>

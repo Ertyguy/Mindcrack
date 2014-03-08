@@ -1,0 +1,32 @@
+<resources>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="black">#ff000000</color>
+	
+
+	<color name="white">#ffffffff</color>
+	<color name="light_grey">#fff7f7f7</color>
+	<color name="grey_text">#ff999999</color>
+	
+	<color name="dark_grey">#ff464646</color>
+	<color name="selected_grey">#ff535353</color>
+	<color name="selected_grey_bot">#ff2d2d2d</color>
+	<color name="favorite">#ff404452</color>
+	<color name="favorite_grey">#ff353844</color>
+	<color name="favorite_grey_bot">#ff2a2c35</color>
+	
+	<color name="transparent_dark_grey">#bb464646</color>
+	<color name="darker_grey">#ff2e2e2e</color>
+	
+	<color name="blue_link">#ff2b70a6</color>
+	<color name="yellow_selected">#ffE1E81A</color>
+	<color name="twitter_blue">#ff009999</color>
+	
+	<color name="shadow_light">#11464646</color>
+	<color name="shadow_dark">#66999999</color>
+	
+	
+	<color name="pressed_color">#4d90fe</color>
+    <color name="default_color">#ffffff</color>
+    
+</resources>

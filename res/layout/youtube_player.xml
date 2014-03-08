@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   	xmlns:tools="http://schemas.android.com/tools"    
+   	android:id="@+id/youtube_player_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black" >
+	
+    
+	<LinearLayout
+     	android:id="@+id/youtube_video"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:gravity="center"
+ 		android:background="@color/black" />
+
+		<ScrollView
+		    android:id="@+id/youtube_scroll_view"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		     android:background="@color/light_grey" >
+
+		    <LinearLayout
+		        android:id="@+id/youtube_view"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical"
+		        android:padding="10dp" >
+
+		        <TextView
+		            android:id="@+id/title"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="@dimen/item_padding"
+		            android:padding="@dimen/item_title_padding"
+		            android:text="@string/loading_title"
+		            android:textAppearance="?android:attr/textAppearanceMedium"
+		            android:background="@drawable/container_round_bottom"
+		            android:textColor="@color/blue_link" />
+
+		        <TextView
+		            android:id="@+id/text"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:autoLink="web"
+		            android:padding="@dimen/item_padding"
+		            android:text="@string/loading_description"
+		            android:background="@drawable/container_round_bottom"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+		    </LinearLayout>
+		    
+		</ScrollView>
+
+</LinearLayout>

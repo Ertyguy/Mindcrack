@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.edaviessmith.mindcrack"
+    android:versionCode="10"
+    android:versionName="1.8" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application 
+        android:name="com.edaviessmith.mindcrack.AppInstance"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/mindcrack"
+
+        android:theme="@style/Theme.VPI" >
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.Members"
+            android:label="@string/mindcrack" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.YoutubeFragment"
+            android:label="@string/youtube_title"
+            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.edaviessmith.mindcrack.Members" />
+        </activity>
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.YoutubePlayer"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/youtube_title"
+            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.edaviessmith.mindcrack.Members" />
+        </activity>
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.TwitterFragment"
+            android:label="@string/twitter_title" >
+        </activity>
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.Settings"
+            android:label="@string/settings_title"
+            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.edaviessmith.mindcrack.Members" />
+        </activity>
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.ManageMembers"
+            android:label="@string/managemembers_title"
+            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.edaviessmith.mindcrack.Members" />
+        </activity>
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.About"
+            android:label="@string/about_title"
+            android:parentActivityName="com.edaviessmith.mindcrack.Settings" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.edaviessmith.mindcrack.Settings" />
+        </activity>
+        
+        <receiver 
+            android:name="com.edaviessmith.mindcrack.AlarmBroadcastReceiver"
+            android:process=":remote">
+            <intent-filter>
+		        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+		    </intent-filter>
+    	</receiver>
+        
+        <service 
+            android:name="com.edaviessmith.mindcrack.MemberActivityService" 
+            android:label="Notification Listener"
+            android:exported="false" />
+        
+    </application>
+
+</manifest>

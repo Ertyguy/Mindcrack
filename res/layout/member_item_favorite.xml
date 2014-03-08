@@ -1,0 +1,26 @@
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/member_list_item" 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"    
+    android:padding="5dp" 
+    android:layout_marginBottom="1dp"
+    android:background="@color/favorite_grey">
+
+    <ImageView
+        android:id="@+id/member_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginRight="5dp"      
+        android:padding="2dp"
+        android:src="@drawable/mindcrack" />
+
+    <TextView
+        android:id="@+id/member_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:text="name" />
+</LinearLayout>

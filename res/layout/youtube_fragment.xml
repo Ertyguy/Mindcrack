@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/youtube_fragment_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/light_grey" >
+
+    <RelativeLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/blue_link"
+            android:text="@string/loading_youtube" />
+
+        <ImageView
+            android:id="@+id/loading_image"            
+            android:layout_toRightOf="@id/loading_text" 
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            
+            android:src="@drawable/warning_icon"
+            android:visibility="gone" />
+        
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
+            android:layout_toRightOf="@id/loading_text"            
+            android:layout_centerVertical="true"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp" />
+
+    </RelativeLayout>
+    
+    <GridView 
+        android:id="@+id/youtube_fragment_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"/>
+
+</LinearLayout>

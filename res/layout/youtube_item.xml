@@ -1,0 +1,80 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+	
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp">
+	    
+        <ImageView
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:background="@drawable/sombre" />
+        
+	    <LinearLayout 
+	        android:id="@+id/item_view"
+	        android:layout_marginTop="6dp"
+	        android:layout_marginLeft="8dp"
+	        android:layout_marginRight="8dp"
+	        android:layout_marginBottom="9dp"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"	    	      
+			android:background="@drawable/container_round_bottom" >
+		    
+	    	
+	    	<RelativeLayout
+	    	    android:layout_width="match_parent"
+	    	    android:layout_height="wrap_content"
+	    	    >
+				<ProgressBar
+	    		    android:id="@+id/progress_bar"
+	    		    android:layout_width="wrap_content"
+	    		    android:layout_height="wrap_content"
+	    		    android:layout_centerInParent="true"
+	    		    />
+		    	<com.edaviessmith.mindcrack.util.ResizableImageView
+			        android:id="@+id/video_image"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"	      
+			        android:scaleType="centerCrop" />
+		    	
+	    	</RelativeLayout>
+	    	
+		    <TextView
+		        android:id="@+id/title"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="@string/loading_title"
+		        android:textColor="@color/blue_link"
+		        android:paddingTop="@dimen/item_padding"
+		        android:paddingLeft="@dimen/item_padding"
+		        android:paddingRight="@dimen/item_padding"
+		        android:textAppearance="?android:attr/textAppearanceMedium"
+		        android:lines="2"
+		        android:ellipsize="end" />
+	
+		    <TextView
+		        android:id="@+id/date"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="right"
+		        android:text="@string/loading_date"
+		        android:paddingBottom="@dimen/item_padding"
+		        android:paddingRight="@dimen/item_padding"
+		        android:textAppearance="?android:attr/textAppearanceSmall"
+		        android:textColor="@color/grey_text" />
+	
+		</LinearLayout>
+		
+	<!--     <View
+	        android:layout_below="@id/item_view"
+	        android:layout_width="fill_parent"
+	        android:layout_height="4dip"
+	        android:background="@drawable/container_dropshadow"
+	        android:layout_marginLeft="4dip"
+	        android:layout_marginRight="4dip" /> -->
+	    
+    </FrameLayout>
+</RelativeLayout>

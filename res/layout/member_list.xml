@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:divider="@drawable/list_divider" 
+    android:dividerHeight="1px"
+    android:background="@color/darker_grey">
+
+    
+    <ListView
+        android:id="@+id/member_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/member_list_item"
+        android:background="@color/dark_grey" />
+    
+    <RelativeLayout
+        android:id="@+id/progress_bar_relative_layout"
+        android:layout_below="@+id/member_list_item"
+        android:background="@color/transparent_dark_grey"
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+	    
+	    <ProgressBar
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true" />
+	    
+    </RelativeLayout>
+    
+    <LinearLayout
+	    android:id="@+id/member_list_item" 
+	    android:layout_alignParentTop="true"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:padding="5dp" 
+	    android:background="@color/dark_grey"
+	    android:layout_marginBottom="1dp">
+	
+	    <ImageView
+	        android:id="@+id/member_icon"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical|center_horizontal"
+	        android:layout_marginRight="5dp"       
+	        android:src="@drawable/ic_launcher" />
+	
+	    <TextView
+	        android:id="@+id/member_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical|center_horizontal"
+	        android:textColor="@color/white"
+	        android:textSize="20sp"
+	        android:text="@string/mindcrack" />
+	</LinearLayout>
+
+</RelativeLayout>
