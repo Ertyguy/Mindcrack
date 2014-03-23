@@ -27,14 +27,16 @@
 	<string name="settings_wifi_hires">On Wifi load HiRes images</string>
     
     <string name="loading_title">Loading Title</string>
+    <string name="loading_text">Loading Text</string>
     <string name="loading_date">Loading Date</string>
     <string name="loading_description">Loading Date</string>
-    <string name="loading_youtube">Searching Youtube for new videos</string>
+    <string name="loading_youtube">Searching Youtube for new content</string>
     <string name="loading_youtube_failed">Could not connect to Youtube</string>
+    <string name="loading_twitter">Searching Twitter for new content</string>
+    <string name="loading_twitter_failed">Could not connect to Twitter</string>
     <string name="save_changes">Save Changes</string>
     
  	
-    
     
     <string-array name="timings_array">
 		<item>Never</item>
@@ -46,4 +48,5 @@
 		<item>12 Hours</item>
 		<item>Daily</item>
 	</string-array>
+	
 </resources>

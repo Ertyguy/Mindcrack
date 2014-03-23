@@ -1,12 +1,15 @@
 package com.edaviessmith.mindcrack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 
 import com.edaviessmith.mindcrack.data.Member;
+import com.edaviessmith.mindcrack.data.Tweet;
 import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
+import com.edaviessmith.mindcrack.db.TwitterORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
 
 import android.annotation.SuppressLint;
@@ -26,15 +29,21 @@ public class AppInstance extends Application{
     public static List<Member> allMembers; //Manage members (any status)
 	
 
-	//Youtube Fragment
-	public static int currentFragmentMemberId = -1;	
+	//Fragment Variables
+	public static int currentYoutubeMemberId = -1;		
 	public static List<YoutubeItem> youtubeItems;
 	public static String playlistPageToken = "";
-
+	public static boolean isYoutubeItemsUpToDate;
+	
+	public static int currentTwitterMemberId = -1;
+	public static List<Tweet> twitterFeed;
+	public static int twitterPageToken;
+	public static boolean isTwitterFeedUpToDate;
+	
 	//Update booleans
 	public static boolean isMindcrackersUpToDate;
     public static boolean isAllMembersUpToDate;
-    public static boolean isYoutubeItemsUpToDate;
+    
 
     
 	// CONTEXT
@@ -104,24 +113,25 @@ public class AppInstance extends Application{
 	        		currentMember = member;
 	        }
 	        isYoutubeItemsUpToDate = false;
+	        isTwitterFeedUpToDate = false;
         }
 	}
-		
-    public static int getCurrentFragmentMemberId() {
-    	if(currentFragmentMemberId == -1) {
-    		setCurrentFragmentMemberId(AppInstance.getMember().getId());
+	
+	
+    public static int getCurrentYoutubeMemberId() {
+    	if(currentYoutubeMemberId == -1) {
+    		setCurrentYoutubeMemberId(AppInstance.getMember().getId());
     	}
-		return currentFragmentMemberId;
+		return currentYoutubeMemberId;
 	}
 
-	public static void setCurrentFragmentMemberId(int currentFragmentMemberId) {
-		AppInstance.currentFragmentMemberId = currentFragmentMemberId;
+	public static void setCurrentYoutubeMemberId(int currentFragmentMemberId) {
+		AppInstance.currentYoutubeMemberId = currentFragmentMemberId;
 	}
 	
-    public static boolean checkSetFragmentMemberIdIsCurrent() {
-    	boolean same = AppInstance.currentFragmentMemberId == getMember().getId();
-    	setCurrentFragmentMemberId(AppInstance.getMember().getId());
-    	
+    public static boolean checkSetYoutubeMemberIdIsCurrent() {
+    	boolean same = AppInstance.currentYoutubeMemberId == getMember().getId();
+    	setCurrentYoutubeMemberId(AppInstance.getMember().getId());    	
     	return same;    	
 	}
 	
@@ -156,14 +166,59 @@ public class AppInstance extends Application{
     			isYoutubeItemsUpToDate = true;
     		}
     	}
-
-    	//MemberORM.updateMembers(getContext(), members);
-    	//isMindcrackersUpToDate = false;
-    	//isAllMembersUpToDate = false;
     }
     
-	
     
+    public static int getCurrentTwitterMemberId() {
+    	if(currentTwitterMemberId == -1) {
+    		setCurrentTwitterMemberId(AppInstance.getMember().getId());
+    	}
+		return currentTwitterMemberId;
+	}
+
+	public static void setCurrentTwitterMemberId(int currentFragmentMemberId) {
+		AppInstance.currentTwitterMemberId = currentFragmentMemberId;
+	}
+	
+    public static boolean checkSetTwitterMemberIdIsCurrent() {
+    	boolean same = AppInstance.currentTwitterMemberId == getMember().getId();
+    	setCurrentTwitterMemberId(AppInstance.getMember().getId());    	
+    	return same;    	
+	}
+    
+	//TODO go to database for twitter
+	public static List<Tweet> getTwitterFeed() {
+		if(twitterFeed == null || twitterFeed.size() == 0 || !isTwitterFeedUpToDate) {
+			Log.d(TAG, "getting twitter feed from db");
+			twitterFeed = TwitterORM.getMemberTwitterFeed(getContext(), getMember().getId());
+			isTwitterFeedUpToDate = true;
+		}
+		return twitterFeed;
+	}
+    
+	public static void updateTwitterFeed(List<Tweet> tweets) {
+		//ORM get latest tweet
+    	Tweet latestTweet = TwitterORM.getMemberLatestTwitterFeed(getContext(), getMember().getId());
+    	
+    	
+    	if(latestTweet == null) {
+    		TwitterORM.insertMemberTwitterFeed(getContext(), tweets);
+    		Log.d(TAG, "adding youtube items");
+    		isTwitterFeedUpToDate = false;
+    	}else {
+    		//Compare the first NewYoutubeItem video with the latest
+    		if(tweets.get(0).getTweetId() != latestTweet.getTweetId()) {
+    			TwitterORM.updateMemberTwitterFeed(getContext(), tweets);
+    			isTwitterFeedUpToDate = false;
+    			Log.d(TAG, "updating twitter feed");
+    		} else {
+    			Log.d(TAG, "twitter feed already up to date");
+    			isTwitterFeedUpToDate = true;
+    		}
+    	}
+	}
+	
+	
 	//Update single Member from Members
     public static void updateCurrentMember(){
     	MemberORM.updateMember(getContext(), getMember());
@@ -182,6 +237,8 @@ public class AppInstance extends Application{
     	isMindcrackersUpToDate = false;
     	isAllMembersUpToDate = false;
     }
+
+
 	
 
 }

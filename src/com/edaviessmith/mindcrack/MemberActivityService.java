@@ -5,14 +5,20 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Map;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.edaviessmith.mindcrack.YoutubeFragment.YoutubePlaylist;
+import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
 import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.MemberActivity;
 import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
@@ -26,18 +32,6 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
-
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.View;
 
 
 public class MemberActivityService extends IntentService   {

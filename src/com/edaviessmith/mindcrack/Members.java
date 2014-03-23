@@ -1,6 +1,5 @@
 package com.edaviessmith.mindcrack;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,13 +32,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.bugsense.trace.BugSenseHandler;
 import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.db.MemberORM;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.PlaylistItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.viewpagerindicator.PageIndicator;
@@ -123,7 +115,7 @@ public class Members extends SlidingFragmentActivity {
 	
 	static class MemberList extends AsyncTask<Void, Void, Void> {
 
-	    private List<Members> memberItems;
+	    //private List<Members> memberItems;
 	    private View menuView;
 	    private Members members;
 	    
@@ -177,10 +169,6 @@ public class Members extends SlidingFragmentActivity {
     	}
 	}
 	
-	protected void onFragmentResume() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void onStop() {

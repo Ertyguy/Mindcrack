@@ -31,11 +31,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createMembers(sqLiteDatabase);
 
         sqLiteDatabase.execSQL(YoutubeItemORM.SQL_CREATE_TABLE);  
+        sqLiteDatabase.execSQL(TwitterORM.SQL_CREATE_TABLE);  
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL(MemberORM.SQL_DROP_TABLE);
+		db.execSQL(YoutubeItemORM.SQL_DROP_TABLE);
+		db.execSQL(TwitterORM.SQL_DROP_TABLE);
 		onCreate(db);
 	}
 	
@@ -43,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static void createMembers(SQLiteDatabase sqLiteDatabase) {
         @SuppressWarnings("serial")
 		List<Member> mindcrackers = new ArrayList<Member>() {{
+			//			//Id	//Name			//Image				//Icon					//Youtube PlaylistId		//Twitter Name
             add(new Member(0, "Adlingtont", R.drawable.adlingtont, R.drawable.adlingtont_icon, "UUfhM3yJ8a_sAJj0qOKb40gw", "adlingtont"));
             add(new Member(1, "AnderZEL", R.drawable.anderzel, R.drawable.anderzel_icon, "UU-_VTaWqRsZ1nzZLHQIGwQA", "youtubeanderzel"));
             add(new Member(2, "Arkas", R.drawable.arkas, R.drawable.arkas_icon, "UUStPXwuYhdUu-B6fkVgi3vQ", "MCArkas"));

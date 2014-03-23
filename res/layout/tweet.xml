@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/sombre"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:id="@+id/item_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/container_round_bottom"
+            android:orientation="vertical" >
+
+            <com.edaviessmith.mindcrack.util.ResizableImageView
+                android:id="@+id/tweet_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:paddingLeft="@dimen/item_padding"
+                android:paddingRight="@dimen/item_padding"
+                android:paddingTop="@dimen/item_padding"
+                android:text="@string/loading_title"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingBottom="@dimen/item_padding"
+                android:paddingRight="@dimen/item_padding"
+                android:text="@string/loading_date"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/grey_text" />
+        </LinearLayout>
+    </FrameLayout>
+
+</RelativeLayout>

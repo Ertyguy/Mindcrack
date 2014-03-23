@@ -1,18 +1,6 @@
 package com.edaviessmith.mindcrack;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-import com.bugsense.trace.BugSenseHandler;
-import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.MemberActivity;
-import com.google.api.services.youtube.YouTube.Videos.GetRating;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -24,8 +12,8 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.util.SparseArray;
-import android.widget.Toast;
+
+import com.bugsense.trace.BugSenseHandler;
 
 
 public class Util{
@@ -35,98 +23,6 @@ public class Util{
 	public static void setIndex(int id, int index) {
 		AppInstance.getMindcrackers().get(id).setSort(index);
 	}
-		
-/*	public static JSONArray getMemberStates(Context context) {
-		
-		SharedPreferences settings = context.getSharedPreferences(Constants.PREFS, 0);
-	    String memberStateString = settings.getString(Constants.PREF_MEMBER_STATE+"break", "[]");
-	    
-	    if(memberStateString != null) {
-	    	try {
-	            JSONArray jsonMembers = new JSONArray(memberStateString);
-	            for (int i = 0; i < jsonMembers.length(); i++) {
-	                 if(jsonMembers.getInt(i) != Constants.VISIBLE) {
-	                	 AppInstance.getMindcrackers().get(i).status = jsonMembers.getInt(i);
-	                 }
-	            }	            
-	            return jsonMembers;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return null;
-	}
-	
-	public static void setMemberStates() {
-		
-		JSONArray jsonMembers = new JSONArray();
-        for (final Member member : AppInstance.getMindcrackers())
-        {    
-        	jsonMembers.put(member.status);
-        }
-		
-		SharedPreferences.Editor settings = AppInstance.getContext().getSharedPreferences(Constants.PREFS, 0).edit();
-        settings.putString(Constants.PREF_MEMBER_STATE,  jsonMembers.toString());
-        settings.commit();
-
-	}*/
-	
-/*	public static SparseArray<MemberActivity> getMemberActivity() {
-		
-		SharedPreferences settings = AppInstance.getContext().getSharedPreferences(Constants.PREFS, 0);
-	    String memberStateString = settings.getString(Constants.PREF_MEMBER_ACTIVITY, "[]");
-	    
-	    SparseArray<MemberActivity> memberActivities = new SparseArray<MemberActivity>();
-	    if(memberStateString != null) {
-	    	try {
-	            JSONArray jsonMembers = new JSONArray(memberStateString);
-	            for (int i = 0; i < jsonMembers.length(); i++) {
-	            	JSONObject json = jsonMembers.getJSONObject(i);
-	            	int id = json.getInt("id");
-	            	memberActivities.put(id, new MemberActivity(id, json.getString("video")));
-	            }	            
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return memberActivities;
-	}
-	
-	
-	
-	public static void setMemberActivity(SparseArray<MemberActivity> memberActivities) {
-		
-		JSONArray jsonMembers = new JSONArray();
-		
-		int key = 0;
-		for(int i = 0; i < memberActivities.size(); i++) {
-		   key = memberActivities.keyAt(i);
-		   // get the object by the key.
-		   MemberActivity member = memberActivities.get(key);
-		   try {
-			   JSONObject json = new JSONObject();
-       			json.put("id", key);
-				json.put("video", member.latestVideo);
-			
-				jsonMembers.put(json);
-       		} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		   
-		}
-		Log.i("Util","Members saved as:"+jsonMembers.toString());
-		SharedPreferences.Editor settings = AppInstance.getContext().getSharedPreferences(Constants.PREFS, 0).edit();
-        settings.putString(Constants.PREF_MEMBER_ACTIVITY,  jsonMembers.toString());
-        settings.commit(); 
-	}
-	
-	
-	public static void clearMemberActivity() {
-		SharedPreferences.Editor settings = AppInstance.getContext().getSharedPreferences(Constants.PREFS, 0).edit();
-		settings.remove(Constants.PREF_MEMBER_ACTIVITY);
-        settings.commit();
-	}*/
-	
 	
 	public static String getTimeSince(long publishedDate) {
      	String date;

@@ -77,15 +77,13 @@ public class YoutubeFragment extends SherlockFragment{
 		
 	
 	public static YoutubeFragment newInstance() {
-	    Log.d(TAG, "fragment new Instance");
 		YoutubeFragment fragment = new YoutubeFragment();
 	    return fragment;
 	}
 
 	 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	Log.d(TAG, "fragment onCreateView");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {    	
         view = inflater.inflate(R.layout.youtube_fragment, null);
         context = view.getContext();
        
@@ -107,7 +105,7 @@ public class YoutubeFragment extends SherlockFragment{
     	super.onActivityCreated(savedInstanceState);
     	Log.d(TAG, "fragment onActivityCreated");
     	
-    	boolean changedMember = !AppInstance.checkSetFragmentMemberIdIsCurrent();
+    	boolean changedMember = !AppInstance.checkSetYoutubeMemberIdIsCurrent();
     	
 		if(changedMember) {
 			Log.e(TAG, "member is changed");
@@ -127,7 +125,7 @@ public class YoutubeFragment extends SherlockFragment{
 			}
 	    	
 	    	AppInstance.isYoutubeItemsUpToDate = false;
-	    	new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentFragmentMemberId()).execute(AppInstance.getMember().getUploadsId());
+	    	new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());
 	        
 		} else {
 			if(loadingLayout != null) {
@@ -154,7 +152,7 @@ public class YoutubeFragment extends SherlockFragment{
 			}
 	    	
 	    	AppInstance.isYoutubeItemsUpToDate = false;
-	    	new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentFragmentMemberId()).execute(AppInstance.getMember().getUploadsId());	    		   
+	    	new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());	    		   
 		}
     	
 
@@ -193,7 +191,7 @@ public class YoutubeFragment extends SherlockFragment{
 	            	    		Log.d(TAG,"Scroll to the top of the list");
 	            	    	}
 	            			Log.d(TAG,"Trigger to search for new items");
-	            			new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentFragmentMemberId()).execute(AppInstance.getMember().getUploadsId());
+	            			new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());
 	            			endOfList = false;
 	            			
 	            		} else if(searchBusy && AppInstance.playlistPageToken == "") {
@@ -435,7 +433,7 @@ public class YoutubeFragment extends SherlockFragment{
 			if(waitingToSearch) {
 				
 				if(AppInstance.playlistPageToken != null) {
-        			new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentFragmentMemberId()).execute(AppInstance.getMember().getUploadsId());
+        			new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());
         			endOfList = false;
         		} 
 				waitingToSearch = false;
