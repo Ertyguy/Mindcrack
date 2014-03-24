@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import com.actionbarsherlock.app.SherlockFragment;
 
 import com.edaviessmith.mindcrack.data.YoutubeItem;
@@ -206,10 +208,10 @@ public class YoutubeFragment extends SherlockFragment{
 	            }
 	        });  
 	        
-	        loadingLayout = (RelativeLayout) getActivity().findViewById(R.id.loading_layout);
-	        loadingTextView = (TextView) getActivity().findViewById(R.id.loading_text);
-        	loadingProgressBar = (ProgressBar) getActivity().findViewById(R.id.loading_progress_bar);
-        	loadingImage = (ImageView) getActivity().findViewById(R.id.loading_image);
+	        loadingLayout = (RelativeLayout) getView().findViewById(R.id.loading_layout);
+	        loadingTextView = (TextView) getView().findViewById(R.id.loading_text);
+        	loadingProgressBar = (ProgressBar) getView().findViewById(R.id.loading_progress_bar);
+        	loadingImage = (ImageView) getView().findViewById(R.id.loading_image);
         	
 	        if(!Util.isNetworkAvailable()) {
 	        	loadingTextView.setText(getResources().getString(R.string.loading_youtube_failed));
@@ -388,7 +390,7 @@ public class YoutubeFragment extends SherlockFragment{
 					    
 					    
 					    String published = playlistItem.getSnippet().getPublishedAt().toString();			    
-					    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+					    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", new Locale("US"));
 	
 					    long dateInMilli = formatter.parse(published).getTime();		    
 						item.setDate(dateInMilli/1000);					

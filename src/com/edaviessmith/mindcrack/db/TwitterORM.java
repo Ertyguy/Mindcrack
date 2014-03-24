@@ -4,14 +4,13 @@ package com.edaviessmith.mindcrack.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.Tweet;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.edaviessmith.mindcrack.data.Tweet;
 
 public class TwitterORM {
 

@@ -1,10 +1,5 @@
 package com.edaviessmith.mindcrack;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,9 +9,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.ToggleButton;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class Settings extends SherlockActivity {
 
@@ -138,7 +136,7 @@ public class Settings extends SherlockActivity {
 	private long indexToLong(int index) {
 		switch(index) {
 			case 0: return 0L;
-			case 1: return 15L;
+			case 1: return 5L;	//TODO 15
 			case 2: return 30L;
 			case 3: return 60L;
 			case 4: return 180L;

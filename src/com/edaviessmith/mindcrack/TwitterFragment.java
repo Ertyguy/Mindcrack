@@ -224,10 +224,10 @@ public class TwitterFragment extends SherlockFragment {
 	            }
 	        });  
 	        
-	        loadingLayout = (RelativeLayout) getActivity().findViewById(R.id.loading_layout);
-	        loadingTextView = (TextView) getActivity().findViewById(R.id.loading_text);
-        	loadingProgressBar = (ProgressBar) getActivity().findViewById(R.id.loading_progress_bar);
-        	loadingImage = (ImageView) getActivity().findViewById(R.id.loading_image);
+	        loadingLayout = (RelativeLayout) getView().findViewById(R.id.loading_layout);
+	        loadingTextView = (TextView) getView().findViewById(R.id.loading_text);
+        	loadingProgressBar = (ProgressBar) getView().findViewById(R.id.loading_progress_bar);
+        	loadingImage = (ImageView) getView().findViewById(R.id.loading_image);
         	
 	        if(!Util.isNetworkAvailable()) {
 	        	loadingTextView.setText(getResources().getString(R.string.loading_twitter_failed));

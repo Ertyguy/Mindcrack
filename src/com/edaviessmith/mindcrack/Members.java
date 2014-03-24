@@ -188,7 +188,6 @@ public class Members extends SlidingFragmentActivity {
 	protected void toggle_favorite() {
 		
 		Member member = AppInstance.getMember();
-		Integer id = Integer.valueOf(member.getId());
 		
 		if(member.getStatus() == Constants.VISIBLE ) {
 			member.setStatus(Constants.FAVORITE);
@@ -196,9 +195,7 @@ public class Members extends SlidingFragmentActivity {
 			member.setStatus(Constants.VISIBLE);
 		}
 		
-		AppInstance.updateCurrentMember();
-		
-		//member_list.invalidate();
+		AppInstance.updateCurrentMember();		
 		getSherlock().dispatchInvalidateOptionsMenu();
 	}
 

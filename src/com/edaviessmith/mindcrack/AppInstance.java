@@ -1,9 +1,13 @@
 package com.edaviessmith.mindcrack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.annotation.SuppressLint;
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.edaviessmith.mindcrack.data.Member;
 import com.edaviessmith.mindcrack.data.Tweet;
@@ -11,12 +15,6 @@ import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
 import com.edaviessmith.mindcrack.db.TwitterORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
-
-import android.annotation.SuppressLint;
-import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 public class AppInstance extends Application{
 

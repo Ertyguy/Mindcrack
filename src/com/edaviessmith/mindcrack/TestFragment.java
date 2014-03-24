@@ -1,19 +1,15 @@
 package com.edaviessmith.mindcrack;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.edaviessmith.mindcrack.R;
 
 
 public class TestFragment extends SherlockFragment {
-	 private String mContent = "???";
+	 //private String mContent = "???";
 	 private static String KEY_TAB_NUM;
      
 	 
@@ -41,7 +37,7 @@ public class TestFragment extends SherlockFragment {
      @Override
      public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContent =  getArguments() != null ? getArguments().getString(KEY_TAB_NUM) : "???";
+        //mContent =  getArguments() != null ? getArguments().getString(KEY_TAB_NUM) : "???";
         
      }
       

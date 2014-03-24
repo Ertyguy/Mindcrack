@@ -99,7 +99,7 @@ public class MemberActivityService extends IntentService   {
 			try {				
 				boolean newYoutubeItem = new YoutubePlaylist(this, member.getId(),youtubeItem.getVideoId()).execute(member.getUploadsId()).get();
 			
-				if(newYoutubeItem) {
+				if(newYoutubeItem || true) {	//REMOVE true
 					updatedMembers.add(member);
 				}
 				

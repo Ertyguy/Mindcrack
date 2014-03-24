@@ -15,10 +15,8 @@ import android.util.Log;
 
 
 public class MemberORM {
-
-	private Context context;
-	
 	static final String TAG = "MemberORM";
+	
 	static final String TABLE = "members";
 	static final String COL_ID = "id";
 	static final String COL_SORT = "sort";

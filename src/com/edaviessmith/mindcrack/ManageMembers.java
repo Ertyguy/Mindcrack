@@ -4,53 +4,39 @@ package com.edaviessmith.mindcrack;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.edaviessmith.mindcrack.YoutubeFragment.YoutubeAdapter.YoutubeHolder;
-import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.YoutubeItem;
-import com.edaviessmith.mindcrack.db.MemberORM;
-import com.edaviessmith.mindcrack.util.MemberStateToggleButtons;
-import com.edaviessmith.mindcrack.util.ResizableImageView;
-import com.edaviessmith.mindcrack.util.ToggleButton;
-import com.mobeta.android.dslv.DragSortController;
-import com.mobeta.android.dslv.DragSortListView;
-import com.mobeta.android.dslv.DragSortListView.RemoveListener;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockListActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.edaviessmith.mindcrack.data.Member;
+import com.edaviessmith.mindcrack.util.MemberStateToggleButtons;
+import com.edaviessmith.mindcrack.util.ToggleButton;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 
 
 
 public class ManageMembers  extends SherlockListActivity {
 
+	//private static String TAG = "ManageMembers";
 	
-	private Context context;
 	private Button save;
 	private MemberAdapter adapter;
 	
@@ -73,14 +59,13 @@ public class ManageMembers  extends SherlockListActivity {
 		setContentView(R.layout.manage_members);
 		// Show the Up button in the action bar.
 		getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
-		context = getApplicationContext();
 		
 		save = (Button) findViewById(R.id.save);
 		save.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				save.setBackground(getResources().getDrawable(R.drawable.button_section_shape_pressed));
+				save.setBackgroundResource(R.drawable.button_section_shape_pressed);
 				AppInstance.updateMembers(adapter.data);
 				NavUtils.navigateUpFromSameTask(ManageMembers.this);
 			}
@@ -93,10 +78,10 @@ public class ManageMembers  extends SherlockListActivity {
 				switch(event.getAction()){
 			    case MotionEvent.ACTION_CANCEL:
 			    case MotionEvent.ACTION_UP:
-			    		save.setBackground(getResources().getDrawable(R.drawable.button_section_shape));
+			    		save.setBackgroundResource(R.drawable.button_section_shape);
 			        break;
 			    case MotionEvent.ACTION_DOWN:
-			    		save.setBackground(getResources().getDrawable(R.drawable.button_section_shape_pressed));
+			    		save.setBackgroundResource(R.drawable.button_section_shape_pressed);
 			        break;
 			    }
 				

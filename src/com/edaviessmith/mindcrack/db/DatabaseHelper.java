@@ -3,13 +3,12 @@ package com.edaviessmith.mindcrack.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.edaviessmith.mindcrack.R;
-import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.YoutubeItem;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.edaviessmith.mindcrack.R;
+import com.edaviessmith.mindcrack.data.Member;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -18,6 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private static Context context;
 	
+	@SuppressWarnings("static-access")
 	public DatabaseHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION); 
 		this.context = context;
