@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import android.app.IntentService;
@@ -99,7 +100,7 @@ public class MemberActivityService extends IntentService   {
 			try {				
 				boolean newYoutubeItem = new YoutubePlaylist(this, member.getId(),youtubeItem.getVideoId()).execute(member.getUploadsId()).get();
 			
-				if(newYoutubeItem || true) {	//REMOVE true
+				if(newYoutubeItem) {
 					updatedMembers.add(member);
 				}
 				
@@ -244,7 +245,7 @@ public class MemberActivityService extends IntentService   {
 					    
 					    
 					    String published = playlistItem.getSnippet().getPublishedAt().toString();			    
-					    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+					    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", new Locale("US"));
 	
 					    long dateInMilli = formatter.parse(published).getTime();		    
 						item.setDate(dateInMilli/1000);					

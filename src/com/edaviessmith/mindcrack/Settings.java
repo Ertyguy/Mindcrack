@@ -37,7 +37,7 @@ public class Settings extends SherlockActivity {
 		toggle_notifications.setOnClickListener(new OnClickListener() {
 
 	        @Override
-	        public void onClick(View arg0) {
+	        public void onClick(View view) {
 	        	Util.setNotificationEnabled(context, toggle_notifications.isChecked());
 	        }
 	    });
@@ -47,7 +47,7 @@ public class Settings extends SherlockActivity {
 		toggle_notifications_on_boot.setOnClickListener(new OnClickListener() {
 
 	        @Override
-	        public void onClick(View arg0) {
+	        public void onClick(View view) {
 	        	Util.setNotificationOnBootEnabled(toggle_notifications_on_boot.isChecked());
 	        }
 	    });
@@ -57,7 +57,7 @@ public class Settings extends SherlockActivity {
 		toggle_notifications_icon.setOnClickListener(new OnClickListener() {
 
 	        @Override
-	        public void onClick(View arg0) {
+	        public void onClick(View view) {
 	        	Util.setNotificationIconEnabled(toggle_notifications_icon.isChecked());
 	        }
 	    });
@@ -104,7 +104,7 @@ public class Settings extends SherlockActivity {
 		toggle_wifi_hires.setOnClickListener(new OnClickListener() {
 
 	        @Override
-	        public void onClick(View arg0) {
+	        public void onClick(View view) {
 	        	Util.setWifiHiResEnabled(toggle_wifi_hires.isChecked());
 	        }
 	    });
@@ -113,7 +113,7 @@ public class Settings extends SherlockActivity {
 		toggle_mobile_hires.setChecked(Util.MobileHiResEnabled());
 		toggle_mobile_hires.setOnClickListener(new OnClickListener() {
 	        @Override
-	        public void onClick(View arg0) {
+	        public void onClick(View view) {
 	        	Util.setMobileHiResEnabled(toggle_mobile_hires.isChecked());
 	        }
 	    });
@@ -136,7 +136,7 @@ public class Settings extends SherlockActivity {
 	private long indexToLong(int index) {
 		switch(index) {
 			case 0: return 0L;
-			case 1: return 5L;	//TODO 15
+			case 1: return 15L;
 			case 2: return 30L;
 			case 3: return 60L;
 			case 4: return 180L;

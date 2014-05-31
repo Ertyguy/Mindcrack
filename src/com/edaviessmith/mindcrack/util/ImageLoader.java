@@ -2,8 +2,9 @@ package com.edaviessmith.mindcrack.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -18,10 +19,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.widget.ImageView;
 
 public class ImageLoader {
-    
+    private static String TAG = "ImageLoader";
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
@@ -40,8 +42,7 @@ public class ImageLoader {
         Bitmap bitmap=memoryCache.get(url);
         if(bitmap != null)
             imageView.setImageBitmap(bitmap);
-        else
-        {
+        else {
             queuePhoto(url, imageView);
             //imageView.setImageResource(stub_id);
         }
@@ -70,10 +71,11 @@ public class ImageLoader {
             conn.setConnectTimeout(30000);
             conn.setReadTimeout(30000);
             conn.setInstanceFollowRedirects(true);
-            InputStream is=conn.getInputStream();
+            InputStream is = conn.getInputStream();
             OutputStream os = new FileOutputStream(f);
-            Utils.CopyStream(is, os);
+            Utils.CopyStream(new FlushedInputStream(is), os);
             os.close();
+            is.close();
             bitmap = decodeFile(f);
             return bitmap;
         } catch (Throwable ex){
@@ -86,7 +88,60 @@ public class ImageLoader {
  
     //decodes image and scales it to reduce memory consumption
     private Bitmap decodeFile(File f){
-        try {
+       // try {
+    	Bitmap bitmap = null;
+    	if(f.exists()) {
+        	try {
+        		final int IMAGE_MAX_SIZE = 600000; // 1.2MP
+        		
+	        	//Scale bitmap to maximum size first
+	            BitmapFactory.Options options = new BitmapFactory.Options();
+	            options.inJustDecodeBounds = true;
+	            InputStream inputStream = null;	            
+	            inputStream = new FileInputStream(f);
+	            BitmapFactory.decodeStream(new FlushedInputStream(inputStream), null, options);
+	            inputStream.close();
+	            // here w and h are the desired width and height
+	
+	            int scale = 1;
+	            while ((options.outWidth * options.outHeight) * (1 / Math.pow(scale, 2)) >  IMAGE_MAX_SIZE) {
+	               scale++;
+	            }
+	            
+	            inputStream = new FileInputStream(f);
+	            if (scale > 1) {
+	                scale--;
+	                // scale to max possible inSampleSize that still yields an image
+	                // larger than target
+	                options = new BitmapFactory.Options();
+	                options.inSampleSize = scale;
+	                bitmap = BitmapFactory.decodeStream(new FlushedInputStream(inputStream), null, options);
+	
+	                // resize to desired dimensions
+	                int height = bitmap.getHeight();
+	                int width = bitmap.getWidth();
+	                //Log.d(TAG, "1th scale operation dimenions - width: " + width + ",height: " + height);
+	
+	                double y = Math.sqrt(IMAGE_MAX_SIZE / (((double) width) / height));
+	                double x = (y / height) * width;
+	
+	                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, (int) x, (int) y, true);
+	                //bitmap.recycle();
+	                bitmap = scaledBitmap;
+	
+	                System.gc();
+	            } else {
+	            	bitmap = BitmapFactory.decodeStream(new FlushedInputStream(inputStream));
+	            }
+        	
+        	} catch (IOException e) {
+        	    Log.e(TAG, e.getMessage(),e);
+        	    return null;
+        	}
+    	}
+        return bitmap;
+        	
+        	/*
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
@@ -97,7 +152,7 @@ public class ImageLoader {
             //TODO figure out at what samplesize should be used (image size here?)
             // MAKES IMAGE LOOK LIKE GARBAGE
             
-            /*final int REQUIRED_SIZE=70;
+            final int REQUIRED_SIZE=70;
             int width_tmp=o.outWidth, height_tmp=o.outHeight;
             int scale=1;
             while(true){
@@ -106,14 +161,15 @@ public class ImageLoader {
                 width_tmp/=2;
                 height_tmp/=2;
                 scale*=2;
-            }*/
+            }
              
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize=1;//scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
         } catch (FileNotFoundException e) {}
-        return null;
+        return null;*/
+    	
     }
      
     //Task for the queue
@@ -181,4 +237,28 @@ public class ImageLoader {
         fileCache.clear();
     }
  
+    
+    static class FlushedInputStream extends FilterInputStream {
+        public FlushedInputStream(InputStream inputStream) {
+            super(inputStream);
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            long totalBytesSkipped = 0L;
+            while (totalBytesSkipped < n) {
+                long bytesSkipped = in.skip(n - totalBytesSkipped);
+                if (bytesSkipped == 0L) {
+                    int b = read();
+                    if (b < 0) {
+                        break;  // we reached EOF
+                    } else {
+                        bytesSkipped = 1; // we read one byte
+                    }
+                }
+                totalBytesSkipped += bytesSkipped;
+            }
+            return totalBytesSkipped;
+        }
+    }
 }
