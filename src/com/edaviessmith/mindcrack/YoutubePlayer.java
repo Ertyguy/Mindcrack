@@ -112,7 +112,6 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 						displayActionbarNav();
 					}
             		
-            		
             	});
             }
 
@@ -137,8 +136,10 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 	
 	
 	private void refreshActionbar() {
-		getSherlock().getActionBar().setTitle(AppInstance.getMember().name);
-		getSherlock().getActionBar().setIcon(AppInstance.getMember().icon);      
+		if(AppInstance.getMember() != null) {
+			getSherlock().getActionBar().setTitle(AppInstance.getMember().name);
+			getSherlock().getActionBar().setIcon(AppInstance.getMember().icon);
+		}
 	}
 	
 	

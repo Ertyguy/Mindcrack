@@ -12,10 +12,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,29 +30,31 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.bugsense.trace.BugSenseHandler;
 import com.edaviessmith.mindcrack.data.Member;
+import com.edaviessmith.mindcrack.util.SlidingTabLayout;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
-import com.viewpagerindicator.PageIndicator;
-import com.viewpagerindicator.TabPageIndicator;
+//import com.viewpagerindicator.PageIndicator;
+//import com.viewpagerindicator.TabPageIndicator;
 
 
 
 
 public class Members extends SlidingFragmentActivity {
-	 public static String TAG = "Members";
-	private static final String[] TAB_TITLES = new String[] { "Youtube", "Twitter" };
+	public static String TAG = "Members";
 	
-	TestFragmentAdapter mAdapter;
-    ViewPager mPager;
-    PageIndicator mIndicator;
-    Context context;
+	Context context;
+	FragmentPagerAdapter fragmentPagerAdapter;
+    ViewPager viewPager;
+    //PageIndicator pageIndicator;
+    SlidingTabLayout pagerTitleStrip;
+    
+    //boolean isReddit;
     
     RelativeLayout progressBarRelativeLayout;
-
     ListView member_list;
     MembersAdapter adapter;
+    LinearLayout reddit_list_item;
     
 
 	@Override
@@ -63,22 +65,16 @@ public class Members extends SlidingFragmentActivity {
         setBehindContentView(R.layout.members);
         context = getApplicationContext();
         
-        //BugSenseHandler.initAndStartSession(context, Constants.BUGSENSE_KEY);
-
         setSlidingActionBarEnabled(true);
-        
-        
-        
-        mAdapter = new TestFragmentAdapter(getSupportFragmentManager());
+        //isReddit = false;
+        fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager());
         refreshFragment();
         
-
+        
         //TODO need to check if intent has member_id (only if other extras are used in intent)
         setMemberFromIntent(getIntent());
         
         
-        Log.d("Members","prefs set to "+AppInstance.getMember().name);
-
         //not in library (TODO:  investigate) [set drawer icon]
         //getSlidingMenu().setActionBarSlideIcon(new ActionBarSlideIcon(
         //		this, R.drawable.ic_drawer, R.string.app_name, R.string.app_name));
@@ -98,24 +94,32 @@ public class Members extends SlidingFragmentActivity {
 
         adapter = new MembersAdapter(this);
         progressBarRelativeLayout = (RelativeLayout) menuView.findViewById(R.id.progress_bar_relative_layout);
+        reddit_list_item = (LinearLayout) menuView.findViewById(R.id.reddit_list_item);
+        reddit_list_item.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AppInstance.setMember(-1);
+				
+				refreshActionbar();
+	            refreshFragment();
+	            getSherlock().dispatchInvalidateOptionsMenu();
+	            getSlidingMenu().toggle(true);
+	            
+	            adapter.notifyDataSetChanged();
+			}
+		});
+        
         
         //Create memberList as AsyncTask
         new MemberList(this, menuView).execute();
 
-
         refreshActionbar();
-
-        Util.startAlarm();
-
-        //BugSenseHandler.addCrashExtraData("Members", "Initialized and Alarm Set");
-
-	
+        Util.startAlarm();	
 	}
 	
 	
 	static class MemberList extends AsyncTask<Void, Void, Void> {
-
-	    //private List<Members> memberItems;
 	    private View menuView;
 	    private Members members;
 	    
@@ -175,55 +179,39 @@ public class Members extends SlidingFragmentActivity {
 		super.onStop();
 		
 		//BugSenseHandler.closeSession(Members.this);
-	    //EasyTracker.getInstance(this).activityStop(this);  // Google analytics
 	}
 	
-	@Override
-	public void onResumeFragments() {
-		//super.onResume();
-
-		
-	}
 
 	protected void toggle_favorite() {
 		
 		Member member = AppInstance.getMember();
 		
-		if(member.getStatus() == Constants.VISIBLE ) {
+		if(member.getStatus() == Constants.VISIBLE) {
 			member.setStatus(Constants.FAVORITE);
-		} else if(member.getStatus() == Constants.FAVORITE ) {
+		} else if(member.getStatus() == Constants.FAVORITE) {
 			member.setStatus(Constants.VISIBLE);
 		}
 		
 		AppInstance.updateCurrentMember();		
 		getSherlock().dispatchInvalidateOptionsMenu();
+		adapter.notifyDataSetChanged();
 	}
 
 
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		
-		boolean fav = AppInstance.getMember().status == Constants.FAVORITE;
-		MenuItem star = (MenuItem)menu.findItem(R.id.favorite_button);
-		if(fav)
-			star.setIcon(R.drawable.ic_action_important);
-		else
-			star.setIcon(R.drawable.ic_action_not_important);
-		Log.d("Menu", "Star is on: "+fav);
-		
+		if(AppInstance.getMember() != null) {
+			boolean fav = AppInstance.getMember().status == Constants.FAVORITE;
+			MenuItem star = (MenuItem)menu.findItem(R.id.favorite_button);
+			if(fav)
+				star.setIcon(R.drawable.ic_action_important);
+			else
+				star.setIcon(R.drawable.ic_action_not_important);
+		}
 		return true;
-		
 	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-		//TODO fix (now db)
-		//AppInstance.setMemberStates();
-	}
-	
+
 	protected void onNewIntent (Intent intent){
 		setMemberFromIntent(intent);
         refreshActionbar();
@@ -234,32 +222,35 @@ public class Members extends SlidingFragmentActivity {
 	
 	private void setMemberFromIntent(Intent intent) {	
 		if(intent != null && intent.hasExtra(Constants.PREF_MEMBER)){
-      	  	int member_id = intent.getIntExtra(Constants.PREF_MEMBER, 0);
-      	  	AppInstance.setMember(member_id);
-      }
-        
+			int member_id = intent.getIntExtra(Constants.PREF_MEMBER, 0);
+			AppInstance.setMember(member_id);
+		}        
 	}
 	
 
 	private void refreshActionbar() {
-		//ImageView view = (ImageView)findViewById(android.R.id.home);
-		//view.setPadding(10, 10, 10, 10);
-		
-		
 		getSherlock().getActionBar().setHomeButtonEnabled(true);
     	getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
-    	getSherlock().getActionBar().setTitle(AppInstance.getMember().getName());
-    	getSherlock().getActionBar().setIcon(AppInstance.getMember().getIcon());        
+    	if(AppInstance.getMember() != null) {
+	    	getSherlock().getActionBar().setTitle(AppInstance.getMember().getName());
+	    	getSherlock().getActionBar().setIcon(AppInstance.getMember().getIcon());
+    	} else {
+    		getSherlock().getActionBar().setTitle("Reddit");
+	    	getSherlock().getActionBar().setIcon(R.drawable.redditmindcrack);
+    	}
 	}
 	
 	
-	private void refreshFragment() {       
-        mPager = (ViewPager)findViewById(R.id.pager);
-        mPager.setAdapter(mAdapter);
- 
-        mIndicator = (TabPageIndicator)findViewById(R.id.indicator);
-        mIndicator.setViewPager(mPager);  
-        BugSenseHandler.addCrashExtraData("FragmentAdapter", "Set");
+	private void refreshFragment() {  		
+        viewPager = (ViewPager)findViewById(R.id.pager);
+        viewPager.setAdapter(fragmentPagerAdapter);
+		viewPager.getAdapter().notifyDataSetChanged();
+        
+        pagerTitleStrip = (SlidingTabLayout)findViewById(R.id.pager_tab_strip);
+        pagerTitleStrip.setViewPager(viewPager);
+        
+        //pageIndicator = (TabPageIndicator)findViewById(R.id.indicator);
+        //pageIndicator.setViewPager(viewPager); 
 	}
 	
 	
@@ -280,14 +271,13 @@ public class Members extends SlidingFragmentActivity {
 	    	notifyDataSetChanged();
 	    }
 	    
-	    public void add(Member item)
+	    /*public void add(Member item)
 	    {
 	    	//Add progress bar, then items before it
 	    	//int index = getCount() > 1? getCount() - 1 : (getCount() > 0? 0: 1);
 	        //youtubeItemList.add(index, item);
-	        notifyDataSetChanged();
-	        
-	    }
+	        notifyDataSetChanged();	        
+	    }*/
 	    
 	    @Override
         public int getItemViewType(int position) {
@@ -337,12 +327,12 @@ public class Members extends SlidingFragmentActivity {
 	            
 	            //Set the background color for member status
 	            if(type == Constants.FAVORITE) {
-	            	if(item.getId() == AppInstance.getMember().getId()) {
+	            	if(AppInstance.getMember() != null && item.getId() == AppInstance.getMember().getId()) {
 	            		holder.itemView.setBackgroundResource(R.drawable.member_item_fav_selected);
 	            	}else {
 	            		holder.itemView.setBackgroundResource(R.color.favorite);
 	            	}
-	            } else if(item.getId() == AppInstance.getMember().getId()) {
+	            } else if(AppInstance.getMember() != null && item.getId() == AppInstance.getMember().getId()) {
 	            	holder.itemView.setBackgroundResource(R.drawable.member_item_selected);
 	            } else {
 	            	holder.itemView.setBackgroundResource(R.color.dark_grey);
@@ -352,8 +342,7 @@ public class Members extends SlidingFragmentActivity {
 	        return convertView;
 	    }
 	    
-	    class MemberHolder
-	    {
+	    class MemberHolder {
 	    	LinearLayout itemView;
 	        ImageView memberIcon;
 	        TextView mamberName;
@@ -371,7 +360,6 @@ public class Members extends SlidingFragmentActivity {
  
         @Override
         public long getItemId(int position) {
-        	//return position;
             return data.get(position).getId();
         }
  
@@ -393,7 +381,7 @@ public class Members extends SlidingFragmentActivity {
         	getSlidingMenu().toggle();
             return true;
 	    case R.id.favorite_button:
-        	toggle_favorite();
+        	toggle_favorite();        	
             return true;
 	    case R.id.settings_button:
 	    	Intent settingsIntent = new Intent(Members.this, Settings.class);
@@ -410,40 +398,51 @@ public class Members extends SlidingFragmentActivity {
 	    return super.onOptionsItemSelected(item);
 	}
 	
-	 class TestFragmentAdapter extends FragmentStatePagerAdapter {     
-	     private int mCount = TAB_TITLES.length;
-	     //private YoutubeFragment youtubeFragment = null;
-	     
-	     public TestFragmentAdapter(FragmentManager fm) {
-	         super(fm);
-	         if (context == null) context = getApplicationContext();
-	         //BugSenseHandler.addCrashExtraData("FragmentAdapter", "Initialized");
-	     }
+	class FragmentPagerAdapter extends FragmentStatePagerAdapter {
+		private final String[] REDDIT_TABS = new String[] { "Reddit", "Post" };
+		private final String[] MEMBER_TABS = new String[] { "Youtube", "Twitter" };
+		
+	    private int mCount = MEMBER_TABS.length;
+	    
+	    public FragmentPagerAdapter(FragmentManager fm) {
+	        super(fm);	
+	        
+	    }
 	 
-	     @Override
-	     public Fragment getItem(int position) {
-	    	 switch (position) {
-	    	 	case 0:
-	    	 		//Log.e(TAG, "youtube fragment new instance" + (youtubeFragment == null));
-	    	 		//youtubeFragment = YoutubeFragment.newInstance();
-	    	 		return  YoutubeFragment.newInstance();//youtubeFragment;
-	    	 	case 1:
-	    	 		return TwitterFragment.newInstance(AppInstance.getMember());
-	    	 }
+	    @Override
+	    public Fragment getItem(int position) {
+	    	if(AppInstance.getMember() != null) {
+		    	switch (position) {
+		    		case 0:
+		    	 		return  YoutubeFragment.newInstance();
+		    	 	case 1:
+		    	 		return TwitterFragment.newInstance();
+		    	}
+	    	} else {
+	    		switch (position) {
+	    		case 0:
+	    	 		return  RedditFragment.newInstance();
+	    		}
+	    	}
+	    	
 	    	 
-	         return TestFragment.newInstance(String.valueOf(position)); //nothing
-	     }	     
+	        return TestFragment.newInstance(String.valueOf(position)); //This should never happen
+	    }	     
 
 		@Override
-	     public int getCount() {
-	         return mCount;
-	     }
-	      
-	     @Override
-	     public CharSequence getPageTitle(int position) {
-	      return TAB_TITLES[position];
-	     }
-	 }
+	    public int getCount() {
+	        return mCount;
+	    }
+	    
+	    @Override
+	    public CharSequence getPageTitle(int position) {
+	    	if(AppInstance.getMember() != null) {
+	    		return MEMBER_TABS[position];
+	    	} else {
+	    		return REDDIT_TABS[position];
+	    	}
+	    }
+	}
 		
     
 

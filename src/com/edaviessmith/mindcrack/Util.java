@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.bugsense.trace.BugSenseHandler;
@@ -278,6 +279,13 @@ public class Util{
 	/*public static boolean stringNotNullOrEmpty(String s) {
 		return s != null && s.length() > 0;
 	}*/
+	
+	public static int getPhoneWidth() {
+		DisplayMetrics metrics = AppInstance.getContext().getResources().getDisplayMetrics();
+		return metrics.widthPixels;
+		
+		
+	}
 	
 	public static boolean isDeviceTablet(){
 		return (AppInstance.getContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK)

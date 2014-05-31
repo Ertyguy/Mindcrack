@@ -1,7 +1,6 @@
 package com.edaviessmith.mindcrack;
 
 import java.util.List;
-import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -10,9 +9,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.edaviessmith.mindcrack.data.Member;
+import com.edaviessmith.mindcrack.data.Post;
 import com.edaviessmith.mindcrack.data.Tweet;
 import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
+import com.edaviessmith.mindcrack.db.RedditORM;
 import com.edaviessmith.mindcrack.db.TwitterORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
 
@@ -37,6 +38,12 @@ public class AppInstance extends Application{
 	public static List<Tweet> twitterFeed;
 	public static int twitterPageToken;
 	public static boolean isTwitterFeedUpToDate;
+	
+	public static List<Post> redditFeed;
+	public static String redditPageToken;
+	public static boolean isRedditFeedUpToDate;
+	
+	public static String redditPost;
 	
 	//Update booleans
 	public static boolean isMindcrackersUpToDate;
@@ -83,13 +90,15 @@ public class AppInstance extends Application{
 		    int memberId = settings.getInt(Constants.PREF_MEMBER, -1);
 		    //none set so make it random :D
 		    if(memberId == -1) {
-		    	Random rnd = new Random();
-		    	memberId = rnd.nextInt(getMindcrackers().size());
+		    	currentMember = null;
+		    	//Random rnd = new Random();
+		    	//memberId = rnd.nextInt(getMindcrackers().size());
+		    } else {
+			    for(Member member : getMindcrackers()) {
+		        	if(member.getId() == memberId)
+		        		currentMember = member;
+		        }
 		    }
-		    for(Member member : getMindcrackers()) {
-	        	if(member.getId() == memberId)
-	        		currentMember = member;
-	        }
 		    //currentMember = getMindcrackers().get(memberId);
 		}
 		return currentMember;
@@ -105,7 +114,10 @@ public class AppInstance extends Application{
         	settings.commit();
         }
         //Member currently set
-        if(memberId != getMember().getId()) {
+        if(memberId == -1) {
+        	currentMember = null;
+        }
+        if(getMember() == null || memberId != getMember().getId()) {
 	        for(Member member : getMindcrackers()) {
 	        	if(member.getId() == memberId)
 	        		currentMember = member;
@@ -115,8 +127,9 @@ public class AppInstance extends Application{
         }
 	}
 	
-	
-    public static int getCurrentYoutubeMemberId() {
+	//// YOUTUBE ////
+    
+	public static int getCurrentYoutubeMemberId() {
     	if(currentYoutubeMemberId == -1) {
     		setCurrentYoutubeMemberId(AppInstance.getMember().getId());
     	}
@@ -167,6 +180,9 @@ public class AppInstance extends Application{
     }
     
     
+    //// TWITTER ////
+    
+    
     public static int getCurrentTwitterMemberId() {
     	if(currentTwitterMemberId == -1) {
     		setCurrentTwitterMemberId(AppInstance.getMember().getId());
@@ -184,7 +200,6 @@ public class AppInstance extends Application{
     	return same;    	
 	}
     
-	//TODO go to database for twitter
 	public static List<Tweet> getTwitterFeed() {
 		if(twitterFeed == null || twitterFeed.size() == 0 || !isTwitterFeedUpToDate) {
 			Log.d(TAG, "getting twitter feed from db");
@@ -216,6 +231,43 @@ public class AppInstance extends Application{
     	}
 	}
 	
+	
+	//// REDDIT ////
+	
+	//TODO go to database for reddit
+	public static List<Post> getRedditFeed() {
+		if(redditFeed == null || redditFeed.size() == 0 || !isRedditFeedUpToDate) {
+			Log.d(TAG, "getting reddit feed from db");
+			redditFeed = RedditORM.getRedditFeed(getContext());
+			isRedditFeedUpToDate = true;
+		}
+		return redditFeed;
+	}
+    
+	public static void updateRedditFeed(List<Post> posts) {
+		//ORM get latest tweet
+    	Post latestPost = RedditORM.getLatestRedditFeed(getContext());
+    	
+    	
+    	if(latestPost == null) {
+    		RedditORM.insertRedditFeed(getContext(), posts);
+    		Log.d(TAG, "adding youtube items");
+    		isRedditFeedUpToDate = false;
+    	}else {
+    		//Compare the first NewYoutubeItem video with the latest
+    		if(posts.get(0).getId() != latestPost.getId()) {
+    			RedditORM.insertRedditFeed(getContext(), posts);
+    			isRedditFeedUpToDate = false;
+    			Log.d(TAG, "updating reddit feed");
+    		} else {
+    			Log.d(TAG, "reddit feed already up to date");
+    			isRedditFeedUpToDate = true;
+    		}
+    	}
+	}
+	
+	
+	//// MEMBER ////
 	
 	//Update single Member from Members
     public static void updateCurrentMember(){

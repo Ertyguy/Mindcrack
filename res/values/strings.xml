@@ -34,9 +34,11 @@
     <string name="loading_youtube_failed">Could not connect to Youtube</string>
     <string name="loading_twitter">Searching Twitter for new content</string>
     <string name="loading_twitter_failed">Could not connect to Twitter</string>
+    <string name="loading_reddit">Searching Reddit for new content</string>
+    <string name="loading_reddit_failed">Could not connect to Reddit</string>
     <string name="save_changes">Save Changes</string>
     
- 	
+ 	<string name="reddit">Reddit</string>
     
     <string-array name="timings_array">
 		<item>Never</item>

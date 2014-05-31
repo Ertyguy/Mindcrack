@@ -74,13 +74,15 @@ public class YoutubeFragment extends SherlockFragment{
 	private static boolean waitingToSearch;
 	private static YoutubeItem loading;
 	
-	
+	private static YoutubeFragment youtubeFragment;
 	private static boolean isDeviceTablet;
 		
 	
 	public static YoutubeFragment newInstance() {
-		YoutubeFragment fragment = new YoutubeFragment();
-	    return fragment;
+		if(youtubeFragment == null) {
+			youtubeFragment = new YoutubeFragment();
+		}
+	    return youtubeFragment;
 	}
 
 	 

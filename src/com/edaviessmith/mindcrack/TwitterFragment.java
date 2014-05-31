@@ -37,7 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.edaviessmith.mindcrack.data.Member;
 import com.edaviessmith.mindcrack.data.Tweet;
 import com.edaviessmith.mindcrack.util.ResizableImageView;
 
@@ -71,7 +70,7 @@ public class TwitterFragment extends SherlockFragment {
 	    
     
     
-	public static TwitterFragment newInstance(Member member) {
+	public static TwitterFragment newInstance() {
 		TwitterFragment fragment = new TwitterFragment();
         return fragment;
     }

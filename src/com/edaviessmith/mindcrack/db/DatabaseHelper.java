@@ -31,7 +31,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createMembers(sqLiteDatabase);
 
         sqLiteDatabase.execSQL(YoutubeItemORM.SQL_CREATE_TABLE);  
-        sqLiteDatabase.execSQL(TwitterORM.SQL_CREATE_TABLE);  
+        sqLiteDatabase.execSQL(TwitterORM.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(RedditORM.SQL_CREATE_TABLE);
 	}
 
 	@Override
@@ -39,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(MemberORM.SQL_DROP_TABLE);
 		db.execSQL(YoutubeItemORM.SQL_DROP_TABLE);
 		db.execSQL(TwitterORM.SQL_DROP_TABLE);
+		db.execSQL(RedditORM.SQL_DROP_TABLE);
 		onCreate(db);
 	}
 	
