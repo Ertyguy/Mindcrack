@@ -106,7 +106,7 @@ public class MemberORM {
         return memberList;
     }
 	
-	//TODO
+	
 	public static List<Member> getMembersbyStatus(Context context, int status) {
 		
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
@@ -149,12 +149,34 @@ public class MemberORM {
         
 	}
 	
+	public static void incrementMember(SQLiteDatabase database, int id) {
+        try {
+        	ContentValues values = new ContentValues();
+        	values.put(MemberORM.COL_ID, id+1);
+            
+	        database.update(TABLE, values, MemberORM.COL_ID + " = ?", new String[]{String.valueOf(id)});	        
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+	
+	public static void incrementSort(SQLiteDatabase database, int id) {
+        try {
+        	ContentValues values = new ContentValues();
+        	values.put(MemberORM.COL_SORT, id+1);
+            
+	        database.update(TABLE, values, MemberORM.COL_SORT + " = ?", new String[]{String.valueOf(id)});	        
+        }catch (Exception e) {
+            e.printStackTrace();
+        }     
+	}
+	
 	public static void updateMembers(Context context, List<Member> members) {
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
         try {
         	database.beginTransaction();
-	        for(Member member : members) {
+	        for(Member member : members) {	        	
 	        	database.update(TABLE, memberUpdateToContentValues(context, member), MemberORM.COL_ID + " = ?", new String[]{String.valueOf(member.getId())});
 	        }
 	        database.setTransactionSuccessful();
@@ -164,7 +186,6 @@ public class MemberORM {
         	database.endTransaction();
         	database.close();
         }
-
 	}
 	
 	
