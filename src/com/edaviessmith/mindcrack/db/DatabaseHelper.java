@@ -24,15 +24,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	@Override
-	public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(MemberORM.SQL_CREATE_TABLE);
-        
+	public void onCreate(SQLiteDatabase db) {
+        db.execSQL(MemberORM.SQL_CREATE_TABLE);
+        db.execSQL(YoutubeItemORM.SQL_CREATE_TABLE);  
+        db.execSQL(TwitterORM.SQL_CREATE_TABLE);
+        db.execSQL(RedditORM.SQL_CREATE_TABLE);
+
         // Put mindcrack members into database
-        createMembers(sqLiteDatabase);
-        
-        sqLiteDatabase.execSQL(YoutubeItemORM.SQL_CREATE_TABLE);  
-        sqLiteDatabase.execSQL(TwitterORM.SQL_CREATE_TABLE);
-        sqLiteDatabase.execSQL(RedditORM.SQL_CREATE_TABLE);
+        createMembers(db);
 	}
 
 	@Override
@@ -56,8 +55,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	
 	public static void createMembers(SQLiteDatabase sqLiteDatabase) {
-        
-        
         
         try {
         	sqLiteDatabase.beginTransaction();
