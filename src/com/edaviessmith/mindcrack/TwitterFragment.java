@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -36,12 +37,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.edaviessmith.mindcrack.data.Tweet;
+import com.edaviessmith.mindcrack.R;
+import com.edaviessmith.mindcrack.util.MediaFragment;
 import com.edaviessmith.mindcrack.util.ResizableImageView;
 
 
-public class TwitterFragment extends SherlockFragment {
+public class TwitterFragment extends Fragment implements MediaFragment{
 	
 	private static String TAG = "TwitterFragment";
 	
@@ -557,6 +559,14 @@ public class TwitterFragment extends SherlockFragment {
 	        }
 	        return bearerToken;
 	    }
+	}
+
+
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
  
 }

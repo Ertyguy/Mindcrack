@@ -1,17 +1,17 @@
 package com.edaviessmith.mindcrack;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.content.Intent;
 import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import com.edaviessmith.mindcrack.R;
 
-public class About extends SherlockActivity {
+public class About extends Activity {
 
 	LinearLayout contactme, rateapp;
 	
@@ -20,7 +20,7 @@ public class About extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
 		// Show the Up button in the action bar.
-		getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		contactme = (LinearLayout)findViewById(R.id.contact_me);
 		rateapp = (LinearLayout)findViewById(R.id.rate_app);

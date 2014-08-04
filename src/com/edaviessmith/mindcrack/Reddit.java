@@ -37,8 +37,8 @@ import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.SlidingTabLayout;
 
 
-public class Members extends ActionBarActivity {
-	public static String TAG = "Members";
+public class Reddit extends ActionBarActivity {
+	public static String TAG = "Reddit";
 
 	FragPagerAdapter fragmentPagerAdapter;
     ViewPager viewPager;
@@ -79,7 +79,7 @@ public class Members extends ActionBarActivity {
 
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Mindcrack");
+                getSupportActionBar().setTitle("Reddit");
                 getSupportActionBar().setIcon(R.drawable.ic_launcher);
             }
         };
@@ -115,13 +115,10 @@ public class Members extends ActionBarActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent redditIntent = new Intent(Members.this, Reddit.class);
-		    	startActivity(redditIntent);
-		    	
-				/*setMember(-1);
+				setMember(-1);
 				fragmentPagerAdapter.update();
 				fragmentPagerAdapter.notifyDataSetChanged();
-				navDrawerLayout.closeDrawer(left_drawer);*/
+				navDrawerLayout.closeDrawer(left_drawer);
 			}
 		});
         
@@ -149,8 +146,6 @@ public class Members extends ActionBarActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
-		
-		//BugSenseHandler.closeSession(Members.this);
 	}
 	
 		@Override
@@ -230,15 +225,13 @@ public class Members extends ActionBarActivity {
         }
 		
 	    switch (item.getItemId()) {
-		    case R.id.favorite_button:
-	        	toggle_favorite();        	
-	            return true;
+		    
 		    case R.id.settings_button:
-		    	Intent settingsIntent = new Intent(Members.this, Settings.class);
+		    	Intent settingsIntent = new Intent(Reddit.this, Settings.class);
 		    	startActivity(settingsIntent);
 	            return true; 
 		    case R.id.manage_button:
-		    	Intent manageIntent = new Intent(Members.this, ManageMembers.class);
+		    	Intent manageIntent = new Intent(Reddit.this, ManageMembers.class);
 		    	startActivity(manageIntent);
 	            return true;
 	    }
@@ -520,9 +513,9 @@ public class Members extends ActionBarActivity {
 	    YoutubeFragment youtubeFragment;
 	    TwitterFragment twitterFragment;
 	    RedditFragment redditFragment;
-	    Members act;
+	    Reddit act;
 	    
-	    public FragPagerAdapter(FragmentManager fm, Members activity) {
+	    public FragPagerAdapter(FragmentManager fm, Reddit activity) {
 	        super(fm);	
 	        act = activity;
 	    }
@@ -534,19 +527,13 @@ public class Members extends ActionBarActivity {
 	    	if(getMember() != null) {
 		    	switch (position) {
 		    		case 0:
-		    	 		youtubeFragment = YoutubeFragment.newInstance(act);
-		    	 		return youtubeFragment;
-		    	 	case 1:
+		    			redditFragment = RedditFragment.newInstance();
+		    	 		return redditFragment;
+		    	 	/*case 1:
 		    	 		twitterFragment = TwitterFragment.newInstance();
-		    	 		return twitterFragment;
+		    	 		return twitterFragment;*/
 		    	}
-	    	} else {
-	    		switch (position) {
-	    		case 0:
-	    			redditFragment =  RedditFragment.newInstance();
-	    			return redditFragment;
-	    		}
-	    	}
+	    	} 
 	    	
 	    	 
 	        return TestFragment.newInstance(String.valueOf(position)); //This should never happen
@@ -555,19 +542,9 @@ public class Members extends ActionBarActivity {
 	    public void update() {
 	    	Log.d("FragPagerAdapter","update called: "+pos);
 	    	if(getMember() != null) {
-	    		if(youtubeFragment != null) youtubeFragment.update(); else youtubeFragment = YoutubeFragment.newInstance(act);
-	    		if(twitterFragment != null) twitterFragment.update(); else twitterFragment = TwitterFragment.newInstance();
-		    	/*switch (pos) {
-		    		case 0:
-		    	 		youtubeFragment.update();
-		    	 	case 1:
-		    	 		twitterFragment.update();
-		    	}*/
+	    		if(redditFragment != null) redditFragment.update(); else redditFragment = RedditFragment.newInstance();
 	    	} else {
-	    		//switch (pos) {
-	    		//case 0:
-	    			if(redditFragment != null) redditFragment.update(); else redditFragment = RedditFragment.newInstance();
-	    		//}
+	    		
 	    	}
 	    }
 	    

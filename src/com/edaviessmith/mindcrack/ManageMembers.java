@@ -9,7 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,10 +25,8 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockListActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.edaviessmith.mindcrack.data.Member;
+import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.MemberStateToggleButtons;
 import com.edaviessmith.mindcrack.util.ToggleButton;
 import com.mobeta.android.dslv.DragSortController;
@@ -33,7 +34,7 @@ import com.mobeta.android.dslv.DragSortListView;
 
 
 
-public class ManageMembers  extends SherlockListActivity {
+public class ManageMembers  extends ActionBarActivity {
 
 	//private static String TAG = "ManageMembers";
 	
@@ -58,7 +59,7 @@ public class ManageMembers  extends SherlockListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.manage_members);
 		// Show the Up button in the action bar.
-		getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		save = (Button) findViewById(R.id.save);
 		save.setOnClickListener(new OnClickListener() {
@@ -92,15 +93,16 @@ public class ManageMembers  extends SherlockListActivity {
 		manageMembers = new ArrayList<Member>();
 		manageMembers.addAll(AppInstance.getAllMembers());
 		
+		mDslv = (DragSortListView) findViewById(android.R.id.list);
 		adapter = new MemberAdapter(this, R.layout.member_draggable_item, manageMembers);	
 		
         LayoutInflater infalter = getLayoutInflater();
-        ViewGroup header = (ViewGroup) infalter.inflate(R.layout.draggable_legend, getListView(), false);        
-        getListView().addHeaderView(header, null, false);
+        ViewGroup header = (ViewGroup) infalter.inflate(R.layout.draggable_legend, mDslv, false);        
+        mDslv.addHeaderView(header, null, false);
         
-        setListAdapter((ListAdapter) adapter);
+        mDslv.setAdapter((ListAdapter) adapter);
         
-        mDslv = (DragSortListView) getListView(); 
+         
         mController = buildController(mDslv);
         
         mDslv.setDropListener(onDrop);
@@ -116,11 +118,11 @@ public class ManageMembers  extends SherlockListActivity {
         @Override
         public void drop(int from, int to) {
             if (from != to) {
-                DragSortListView list = (DragSortListView)getListView();
+                //DragSortListView list = (DragSortListView)getListView();
                 Member item = adapter.getItem(from);                
                 adapter.remove(item);
                 adapter.insert(item, to);
-                list.moveCheckState(from, to);
+                mDslv.moveCheckState(from, to);
             }
         }
     };
@@ -145,16 +147,15 @@ public class ManageMembers  extends SherlockListActivity {
     
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.settings, menu);
-		return true;
+		getMenuInflater().inflate(R.menu.settings, menu);
+	    return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+			finish();
 			return true;
 	    case R.id.about_button:
 	    	Intent intent = new Intent(this, About.class);

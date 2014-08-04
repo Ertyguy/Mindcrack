@@ -1,22 +1,21 @@
 package com.edaviessmith.mindcrack;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 import android.widget.ToggleButton;
+import com.edaviessmith.mindcrack.R;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
-public class Settings extends SherlockActivity {
+public class Settings extends Activity {
 
 	Spinner picker_mobile, picker_wifi;
 	ToggleButton toggle_notifications, toggle_notifications_on_boot, toggle_notifications_icon, toggle_mobile_hires, toggle_wifi_hires; 
@@ -27,7 +26,7 @@ public class Settings extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
 		// Show the Up button in the action bar.
-		getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		context = getApplicationContext();
 		final SharedPreferences settings = context.getSharedPreferences(Constants.PREFS, 0);
 		
@@ -151,7 +150,7 @@ public class Settings extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.settings, menu);
+		//getSupportMenuInflater().inflate(R.menu.settings, menu);
 		return true;
 	}
 
@@ -159,7 +158,7 @@ public class Settings extends SherlockActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+			finish();
 			return true;
 	    case R.id.about_button:
 	    	Intent intent = new Intent(this, About.class);

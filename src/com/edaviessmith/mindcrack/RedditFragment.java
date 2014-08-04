@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -30,15 +31,15 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.edaviessmith.mindcrack.data.Post;
+import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.ImageLoader;
+import com.edaviessmith.mindcrack.util.MediaFragment;
 import com.edaviessmith.mindcrack.util.RemoteData;
 import com.edaviessmith.mindcrack.util.ResizableImageView;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -53,7 +54,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 
-public class RedditFragment extends SherlockFragment {
+public class RedditFragment extends Fragment implements MediaFragment {
 	
 	private static String TAG = "RedditFragment";
 	
@@ -621,5 +622,12 @@ public class RedditFragment extends SherlockFragment {
         super.onCreate(savedInstanceState);  
 
      }
+
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -12,10 +12,9 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -23,8 +22,8 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
@@ -36,10 +35,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.edaviessmith.mindcrack.data.Member;
 import com.edaviessmith.mindcrack.data.Post;
-import com.edaviessmith.mindcrack.db.RedditORM;
+import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.ImageLoader;
 import com.edaviessmith.mindcrack.util.RemoteData;
 import com.edaviessmith.mindcrack.util.ResizableImageView;
@@ -55,7 +52,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 
-public class RedditPostFragment extends SherlockFragment {
+public class RedditPostFragment extends Fragment {
 	
 	private static String TAG = "RedditPostFragment";
 	
