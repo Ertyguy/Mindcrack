@@ -10,6 +10,11 @@
     <string name="settings_title">Settings</string>
     <string name="managemembers_title">Manage Members</string>
     
+    <string name="members">Members</string>
+    
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    
     <string name="about_ver">Version: </string>
     <string name="about_ver_num">2.1</string>
     <string name="about_contact">Contact Me: </string>
@@ -30,13 +35,15 @@
     <string name="loading_text">Loading Text</string>
     <string name="loading_date">Loading Date</string>
     <string name="loading_description">Loading Date</string>
-    <string name="loading_youtube">Searching Youtube for new content</string>
+    <string name="loading_youtube">Syncing with Youtube for new content</string>
     <string name="loading_youtube_failed">Could not connect to Youtube</string>
-    <string name="loading_twitter">Searching Twitter for new content</string>
+    <string name="loading_twitter">Syncing with Twitter for new content</string>
     <string name="loading_twitter_failed">Could not connect to Twitter</string>
+    <string name="loading_reddit">Syncing with Reddit for new content</string>
+    <string name="loading_reddit_failed">Could not connect to Reddit</string>
     <string name="save_changes">Save Changes</string>
     
- 	
+ 	<string name="reddit">Reddit</string>
     
     <string-array name="timings_array">
 		<item>Never</item>

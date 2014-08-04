@@ -5,10 +5,11 @@
 	
 
 	<color name="white">#ffffffff</color>
+	<color name="grey_divider">#a0f7f7f7</color>
 	<color name="light_grey">#fff7f7f7</color>
 	<color name="grey_text">#ff999999</color>
 	
-	<color name="dark_grey">#ff464646</color>
+	<color name="dark_grey">#f02F2F2F</color>
 	<color name="selected_grey">#ff535353</color>
 	<color name="selected_grey_bot">#ff2d2d2d</color>
 	<color name="favorite">#ff404452</color>

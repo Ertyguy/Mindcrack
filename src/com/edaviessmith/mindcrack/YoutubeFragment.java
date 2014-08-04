@@ -2,37 +2,20 @@ package com.edaviessmith.mindcrack;
 
 
 import java.io.IOException;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
-import com.edaviessmith.mindcrack.data.YoutubeItem;
-import com.edaviessmith.mindcrack.util.ImageLoader;
-import com.edaviessmith.mindcrack.util.ResizableImageView;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.PlaylistItem;
-import com.google.api.services.youtube.model.PlaylistItemListResponse;
-
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,8 +33,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.edaviessmith.mindcrack.data.YoutubeItem;
+import com.edaviessmith.mindcrack.R;
+import com.edaviessmith.mindcrack.util.ImageLoader;
+import com.edaviessmith.mindcrack.util.MediaFragment;
+import com.edaviessmith.mindcrack.util.ResizableImageView;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.PlaylistItem;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
 
-public class YoutubeFragment extends SherlockFragment{
+
+public class YoutubeFragment extends Fragment implements MediaFragment{
 
 	private static String TAG = "YoutubeFragment";
 	
@@ -74,50 +73,44 @@ public class YoutubeFragment extends SherlockFragment{
 	private static boolean waitingToSearch;
 	private static YoutubeItem loading;
 	
-	
+	private static YoutubeFragment youtubeFragment;
 	private static boolean isDeviceTablet;
 		
+	static Members act;
 	
-	public static YoutubeFragment newInstance() {
-		YoutubeFragment fragment = new YoutubeFragment();
-	    return fragment;
+	public static YoutubeFragment newInstance(Members activity) {
+		Log.e(TAG, "newInstance");
+		act = activity;
+		if(youtubeFragment == null) {
+			youtubeFragment = new YoutubeFragment();
+		}
+	    return youtubeFragment;
 	}
 
-	 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {    	
-        view = inflater.inflate(R.layout.youtube_fragment, null);
-        context = view.getContext();
-       
-        imageLoader = new ImageLoader(context);
-        isDeviceTablet = Util.isDeviceTablet();
-        loading = new YoutubeItem();
-        
-        if(!Util.isNetworkAvailable()) {
-        	//Toast.makeText(context, "Cannot connect to the internet", Toast.LENGTH_LONG).show();
-        	
-        }
-        
-        return view;
-    }
+
+	@Override
+	public void update() {
+		Log.d(TAG, "update");
+		createFragment();
+	}
 	
-	
-    
-    public void onActivityCreated (Bundle savedInstanceState){
-    	super.onActivityCreated(savedInstanceState);
-    	Log.d(TAG, "fragment onActivityCreated");
+	private void createFragment() {
+
     	
-    	boolean changedMember = !AppInstance.checkSetYoutubeMemberIdIsCurrent();
+    	boolean changedMember = !act.checkSetYoutubeMemberIdIsCurrent();
     	
-		if(changedMember) {
+    	
+    	Log.d(TAG, "fragment created, member has changed:" + changedMember);
+    	
+		if(changedMember || youtubeItemList == null) {
 			Log.e(TAG, "member is changed");
-			AppInstance.playlistPageToken = "";
+			act.playlistPageToken = "";
     		beginningOfList = true;
 			
 
-			youtubeItemList = new ArrayList<YoutubeItem>(AppInstance.getYoutubeItems());
+			youtubeItemList = new ArrayList<YoutubeItem>(act.getYoutubeItems());
 	    	// Add loading Youtube item
-	    	youtubeItemList.add(youtubeItemList.size(), loading);
+			if(!youtubeItemList.contains(loading)) youtubeItemList.add(youtubeItemList.size(), loading);
 	    		    	
 	    	if(adapter != null) {
 	    		adapter.clearItems();
@@ -126,8 +119,8 @@ public class YoutubeFragment extends SherlockFragment{
 			 	}
 			}
 	    	
-	    	AppInstance.isYoutubeItemsUpToDate = false;
-	    	new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());
+	    	act.isYoutubeItemsUpToDate = false;
+	    	new YoutubePlaylist(YoutubeFragment.this, act.getCurrentYoutubeMemberId()).execute(act.getMember().getUploadsId());
 	        
 		} else {
 			if(loadingLayout != null) {
@@ -141,10 +134,10 @@ public class YoutubeFragment extends SherlockFragment{
 		}
 		
     	
-		if(youtubeItemList == null) {
-			youtubeItemList = new ArrayList<YoutubeItem>(AppInstance.getYoutubeItems());
+		/*if(youtubeItemList == null) {
+			youtubeItemList = new ArrayList<YoutubeItem>(act.getYoutubeItems());
 	    	// Add loading Youtube item
-	    	youtubeItemList.add(youtubeItemList.size(), loading);
+			if(!youtubeItemList.contains(loading)) youtubeItemList.add(youtubeItemList.size(), loading);
 	    	
 	    	if(adapter != null) {
 	    		adapter.clearItems();
@@ -153,19 +146,53 @@ public class YoutubeFragment extends SherlockFragment{
 			 	}
 			}
 	    	
-	    	AppInstance.isYoutubeItemsUpToDate = false;
-	    	new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());	    		   
+	    	act.isYoutubeItemsUpToDate = false;
+	    	new YoutubePlaylist(YoutubeFragment.this, act.getCurrentYoutubeMemberId()).execute(act.getMember().getUploadsId());	    		   
 		}
-    	
+    	*/
 
         if(changedMember) {
         	Log.e(TAG, "MEMBER HAS CHANGED SCROLL NOW");
-        	gridView.smoothScrollToPosition(0);
+        	gridView.post(new Runnable() {
+        	    @Override
+        	    public void run() {
+        	    	gridView.setSelection(0);
+        	    }
+        	});
+            
 	    	if(loadingLayout != null) {
 	    		loadingLayout.setVisibility(View.VISIBLE);
 			}
         } 
-    	    
+	}
+	
+	 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {    	
+        view = inflater.inflate(R.layout.youtube_fragment, null);
+        Log.e(TAG, "onCreateView");
+        context = view.getContext();
+       
+        imageLoader = new ImageLoader(context);
+        isDeviceTablet = Util.isDeviceTablet();
+        if(loading == null) loading = new YoutubeItem();
+        
+        if(!Util.isNetworkAvailable()) {
+        	//Toast.makeText(context, "Cannot connect to the internet", Toast.LENGTH_LONG).show();
+        	
+        }
+        
+        return view;
+    }
+	
+	
+    
+    public void onActivityCreated (Bundle savedInstanceState){
+    	super.onActivityCreated(savedInstanceState);
+    	
+    	Log.d(TAG, "fragment onActivityCreated");
+    	
+    	createFragment();
     }
 
     private void initView() {
@@ -186,23 +213,24 @@ public class YoutubeFragment extends SherlockFragment{
 	
 	                if(view.getLastVisiblePosition() >= totalItemCount - 5){
 	                	
-	                	if(!searchBusy && !waitingToSearch  && AppInstance.playlistPageToken != null) {
-	            			
-	            			if(beginningOfList && AppInstance.playlistPageToken == "") {
+	                	if(!searchBusy && !waitingToSearch  && act.playlistPageToken != null) {
+	            			/*
+	            			if(beginningOfList && act.playlistPageToken == "") {
 	            	    		gridView.setSelection(0);
 	            	    		Log.d(TAG,"Scroll to the top of the list");
-	            	    	}
+	            	    	}*/
 	            			Log.d(TAG,"Trigger to search for new items");
-	            			new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());
+	            			new YoutubePlaylist(YoutubeFragment.this, act.getCurrentYoutubeMemberId()).execute(act.getMember().getUploadsId());
 	            			endOfList = false;
 	            			
-	            		} else if(searchBusy && AppInstance.playlistPageToken == "") {
+	            		} else if(searchBusy && act.playlistPageToken == "") {
 	            			waitingToSearch = true;
-	            			
-	            		} else if (AppInstance.playlistPageToken == null && !endOfList){
-	            			Toast.makeText(context, "No more uploads found for "+AppInstance.getMember().getName(), Toast.LENGTH_SHORT).show();
+	            			Log.d(TAG,"Waiting to search");
+	            		} else if (act.playlistPageToken == null && !endOfList){
+	            			Toast.makeText(context, "No more uploads found for "+act.getMember().getName(), Toast.LENGTH_SHORT).show();
 	            			adapter.removeProgressBar();
 	            			endOfList = true;		
+	            			Log.d(TAG,"End of the list");
 	            		}
 	                }
 	            }
@@ -356,6 +384,7 @@ public class YoutubeFragment extends SherlockFragment{
 	        return row;
 	    }
 	    
+	    
 	    class YoutubeHolder
 	    {
 	    	LinearLayout itemView;
@@ -364,6 +393,7 @@ public class YoutubeFragment extends SherlockFragment{
 	        TextView title;
 	        TextView date;
 	    }
+	    
 	}
 	
 	
@@ -376,7 +406,7 @@ public class YoutubeFragment extends SherlockFragment{
 		if(playlistItems != null) {
 			List<YoutubeItem> youtubeItems = new ArrayList<YoutubeItem>();
 			int index = 0;
-			int memberId = AppInstance.getMember().getId();
+			int memberId = act.getMember().getId();
 			for(PlaylistItem playlistItem : playlistItems) {
 				if(playlistItem != null) {
 					try {
@@ -408,7 +438,7 @@ public class YoutubeFragment extends SherlockFragment{
 			
 			//Only save the first page of YoutubeItems
 	        if(beginningOfList) {
-	        	AppInstance.updateYoutubeItems(youtubeItems);
+	        	act.updateYoutubeItems(youtubeItems);
 	        	beginningOfList = false;
 	        	Log.d(TAG, "adding items to updateYoutubeItems");
 	        } else {
@@ -419,13 +449,13 @@ public class YoutubeFragment extends SherlockFragment{
 	        	
 	        	
 	        // If the records in the database are not up to date
-	        if(!AppInstance.isYoutubeItemsUpToDate) {
+	        if(!act.isYoutubeItemsUpToDate || adapter.getCount() == 0) {
 	        	adapter.clearItems(); //Clear all items currently in the adapter
 	        	
 	        	for(YoutubeItem item : youtubeItems) {
 	        		adapter.add(item);
 				}
-	        	AppInstance.isYoutubeItemsUpToDate = true;
+	        	act.isYoutubeItemsUpToDate = true;
 	        }
 	        
 	        
@@ -434,8 +464,8 @@ public class YoutubeFragment extends SherlockFragment{
 			//Used if you scroll to the end of the list before the first result is returned
 			if(waitingToSearch) {
 				
-				if(AppInstance.playlistPageToken != null) {
-        			new YoutubePlaylist(YoutubeFragment.this, AppInstance.getCurrentYoutubeMemberId()).execute(AppInstance.getMember().getUploadsId());
+				if(act.playlistPageToken != null) {
+        			new YoutubePlaylist(YoutubeFragment.this, act.getCurrentYoutubeMemberId()).execute(act.getMember().getUploadsId());
         			endOfList = false;
         		} 
 				waitingToSearch = false;
@@ -468,8 +498,8 @@ public class YoutubeFragment extends SherlockFragment{
 
 	    @Override
 	    protected Void doInBackground(String... params) {
-
-	    	playlistItems = getRecentPlaylistItems(params[0], AppInstance.playlistPageToken);
+	    	Log.i(TAG,"youtube starting search "+ act.playlistPageToken);
+	    	playlistItems = getRecentPlaylistItems(params[0], act.playlistPageToken);
 	    	
 			return null;
 	    }  
@@ -500,16 +530,17 @@ public class YoutubeFragment extends SherlockFragment{
 		        PlaylistItemListResponse playlistItemResponse = search.execute();
 		        
 		        List<PlaylistItem> playlistItemList = playlistItemResponse.getItems();
+		        Log.i(TAG,"youtube checking member and current member "+act.getMember().getId() +" - "+ this.currentMemberId);
 		        
-		        
-		        if(AppInstance.getMember().getId() == this.currentMemberId) {
-		        	AppInstance.playlistPageToken = playlistItemResponse.getNextPageToken();
-			        Log.i("Youtube","search executed page token: "+ AppInstance.playlistPageToken);
+		        if(act.getMember().getId() == this.currentMemberId) {
+		        	act.playlistPageToken = playlistItemResponse.getNextPageToken();
+			        Log.i(TAG,"youtube search executed page token: "+ act.playlistPageToken);
 			        
 			        if (playlistItemList != null) {
 			        	return playlistItemList;          
 			        }
 		        } else {
+		        	act.playlistPageToken = "";
 		        	return null;
 		        }
 		        
@@ -525,6 +556,8 @@ public class YoutubeFragment extends SherlockFragment{
 	    }
 	    
 	}
+
+
 
 
 

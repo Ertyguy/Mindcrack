@@ -1,449 +1,599 @@
 package com.edaviessmith.mindcrack;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.bugsense.trace.BugSenseHandler;
 import com.edaviessmith.mindcrack.data.Member;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
-import com.viewpagerindicator.PageIndicator;
-import com.viewpagerindicator.TabPageIndicator;
+import com.edaviessmith.mindcrack.data.Post;
+import com.edaviessmith.mindcrack.data.Tweet;
+import com.edaviessmith.mindcrack.data.YoutubeItem;
+import com.edaviessmith.mindcrack.db.MemberORM;
+import com.edaviessmith.mindcrack.db.RedditORM;
+import com.edaviessmith.mindcrack.db.TwitterORM;
+import com.edaviessmith.mindcrack.db.YoutubeItemORM;
+import com.edaviessmith.mindcrack.R;
+import com.edaviessmith.mindcrack.util.SlidingTabLayout;
 
 
+public class Members extends ActionBarActivity {
+	public static String TAG = "Members";
 
-
-public class Members extends SlidingFragmentActivity {
-	 public static String TAG = "Members";
-	private static final String[] TAB_TITLES = new String[] { "Youtube", "Twitter" };
-	
-	TestFragmentAdapter mAdapter;
-    ViewPager mPager;
-    PageIndicator mIndicator;
-    Context context;
+	FragPagerAdapter fragmentPagerAdapter;
+    ViewPager viewPager;
+    //PageIndicator pageIndicator;
+    SlidingTabLayout pagerTitleStrip;
+    
+    //boolean isReddit;
     
     RelativeLayout progressBarRelativeLayout;
-
+    RelativeLayout left_drawer;
     ListView member_list;
     MembersAdapter adapter;
+    LinearLayout reddit_list_item;
     
-
+    MenuItem star;
+    
+    private DrawerLayout navDrawerLayout;
+    private ActionBarDrawerToggle navDrawerToggle;
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        setContentView(R.layout.members);
-        setBehindContentView(R.layout.members);
-        context = getApplicationContext();
-        
-        //BugSenseHandler.initAndStartSession(context, Constants.BUGSENSE_KEY);
-
-        setSlidingActionBarEnabled(true);
-        
-        
-        
-        mAdapter = new TestFragmentAdapter(getSupportFragmentManager());
-        refreshFragment();
-        
+        setContentView(R.layout.social_media);
 
         //TODO need to check if intent has member_id (only if other extras are used in intent)
         setMemberFromIntent(getIntent());
         
         
-        Log.d("Members","prefs set to "+AppInstance.getMember().name);
-
-        //not in library (TODO:  investigate) [set drawer icon]
-        //getSlidingMenu().setActionBarSlideIcon(new ActionBarSlideIcon(
-        //		this, R.drawable.ic_drawer, R.string.app_name, R.string.app_name));
-        getSlidingMenu().setMode(SlidingMenu.LEFT);
-        getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        getSlidingMenu().setShadowWidth(25);
-        getSlidingMenu().setFadeDegree(0.0f);        
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());  
-        getSlidingMenu().setBehindWidth((int)px);//400       
+        // D R A W E R //
         
-        
-        View menuView = View.inflate(context, R.layout.member_list, null);
-        getSlidingMenu().setMenu(menuView);         
+        navDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navDrawerToggle = new ActionBarDrawerToggle(this, navDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
 
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                refreshActionbar();
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Mindcrack");
+                getSupportActionBar().setIcon(R.drawable.ic_launcher);
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        navDrawerLayout.setDrawerListener(navDrawerToggle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        navDrawerToggle.syncState();
+        
+        left_drawer = (RelativeLayout) findViewById(R.id.left_drawer);
         adapter = new MembersAdapter(this);
-        progressBarRelativeLayout = (RelativeLayout) menuView.findViewById(R.id.progress_bar_relative_layout);
+        adapter.setData(getMindcrackers());
         
-        //Create memberList as AsyncTask
-        new MemberList(this, menuView).execute();
-
-
-        refreshActionbar();
-
-        Util.startAlarm();
-
-        //BugSenseHandler.addCrashExtraData("Members", "Initialized and Alarm Set");
-
-	
-	}
-	
-	
-	static class MemberList extends AsyncTask<Void, Void, Void> {
-
-	    //private List<Members> memberItems;
-	    private View menuView;
-	    private Members members;
-	    
-	    public MemberList(Members members, View menuView) {
-	    	this.members = members;
-	    	this.menuView = menuView;
-	    }
-	    
-	    protected void onPreExecute() { 
-	    	
-	    }
-
-	    @Override
-	    protected Void doInBackground(Void ...params) {	
-	    		members.adapter.setData(AppInstance.getMindcrackers());    
-			return null;
-	    }  
-
-
-	    protected void onPostExecute(Void v) {	
-	    	members.updateList(menuView);
-	    }
- 
-	}
-	
-	private void updateList(View menuView) {
-		member_list = (ListView) menuView.findViewById(R.id.member_listview);
-    	member_list.setAdapter(adapter);
+        member_list = (ListView) findViewById(R.id.member_listview);
+        member_list.setAdapter(adapter);
     	member_list.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            	view.setSelected(true);
+            	//view.setSelected(true);
 	            Member member = (Member) member_list.getItemAtPosition(position);
-	            AppInstance.setMember(member.getId());
-	           
-	            refreshActionbar();
-	            refreshFragment();
-	            getSherlock().dispatchInvalidateOptionsMenu();
-	            getSlidingMenu().toggle(true);
+	            setMember(member.getId());
 	            
-	            adapter.notifyDataSetChanged();	            
+	            fragmentPagerAdapter.update();
+				fragmentPagerAdapter.notifyDataSetChanged();
+				navDrawerLayout.closeDrawer(left_drawer);
             }
         });
     	
     	
-    	if(getSlidingMenu().isMenuShowing()) {
-	    	Animation slideHiddenAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_up);
-	    	progressBarRelativeLayout.setVisibility(View.VISIBLE);
-	    	progressBarRelativeLayout.startAnimation(slideHiddenAnimation);
-    	} else {
-    		progressBarRelativeLayout.setVisibility(View.GONE);
-    	}
+        reddit_list_item = (LinearLayout) findViewById(R.id.reddit_list_item);
+        reddit_list_item.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent redditIntent = new Intent(Members.this, Reddit.class);
+		    	startActivity(redditIntent);
+		    	
+				/*setMember(-1);
+				fragmentPagerAdapter.update();
+				fragmentPagerAdapter.notifyDataSetChanged();
+				navDrawerLayout.closeDrawer(left_drawer);*/
+			}
+		});
+        
+    	
+        
+        // F R A G M E N T   P A G E R //
+        
+        //isReddit = false;
+        fragmentPagerAdapter = new FragPagerAdapter(getSupportFragmentManager(), this);
+        
+        viewPager = (ViewPager)findViewById(R.id.pager);
+        viewPager.setAdapter(fragmentPagerAdapter);
+		viewPager.getAdapter().notifyDataSetChanged();
+        
+        pagerTitleStrip = (SlidingTabLayout)findViewById(R.id.pager_tab_strip);
+        pagerTitleStrip.setViewPager(viewPager);
+        
+        
+        
+        refreshActionbar();
+        Util.startAlarm();	
 	}
 	
-
+	
 	@Override
 	public void onStop() {
 		super.onStop();
 		
 		//BugSenseHandler.closeSession(Members.this);
-	    //EasyTracker.getInstance(this).activityStop(this);  // Google analytics
 	}
 	
-	@Override
-	public void onResumeFragments() {
-		//super.onResume();
-
-		
+		@Override
+	public void onResume() {
+		super.onResume();
+		fragmentPagerAdapter.update();
 	}
+	
 
 	protected void toggle_favorite() {
-		
-		Member member = AppInstance.getMember();
-		
-		if(member.getStatus() == Constants.VISIBLE ) {
+		Member member = getMember();
+		if(member.getStatus() == Constants.VISIBLE) {
 			member.setStatus(Constants.FAVORITE);
-		} else if(member.getStatus() == Constants.FAVORITE ) {
+			star.setIcon(R.drawable.ic_action_important);
+			
+		} else if(member.getStatus() == Constants.FAVORITE) {
 			member.setStatus(Constants.VISIBLE);
+			star.setIcon(R.drawable.ic_action_not_important);
 		}
 		
-		AppInstance.updateCurrentMember();		
-		getSherlock().dispatchInvalidateOptionsMenu();
+		updateCurrentMember();
 	}
 
 
 	
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.members, menu);
 		
-		boolean fav = AppInstance.getMember().status == Constants.FAVORITE;
-		MenuItem star = (MenuItem)menu.findItem(R.id.favorite_button);
-		if(fav)
-			star.setIcon(R.drawable.ic_action_important);
-		else
-			star.setIcon(R.drawable.ic_action_not_important);
-		Log.d("Menu", "Star is on: "+fav);
+		if(getMember() != null) {
+			boolean fav = getMember().status == Constants.FAVORITE;
+			star = (MenuItem)menu.findItem(R.id.favorite_button);
+			if(fav)
+				star.setIcon(R.drawable.ic_action_important);
+			else
+				star.setIcon(R.drawable.ic_action_not_important);
+		}
 		
-		return true;
-		
+	    return super.onCreateOptionsMenu(menu);
 	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-		//TODO fix (now db)
-		//AppInstance.setMemberStates();
-	}
-	
+
 	protected void onNewIntent (Intent intent){
 		setMemberFromIntent(intent);
-        refreshActionbar();
-        refreshFragment();
-        getSherlock().dispatchInvalidateOptionsMenu();
 	}
 
 	
 	private void setMemberFromIntent(Intent intent) {	
 		if(intent != null && intent.hasExtra(Constants.PREF_MEMBER)){
-      	  	int member_id = intent.getIntExtra(Constants.PREF_MEMBER, 0);
-      	  	AppInstance.setMember(member_id);
-      }
-        
+			int member_id = intent.getIntExtra(Constants.PREF_MEMBER, 0);
+			setMember(member_id);
+		}        
 	}
 	
 
 	private void refreshActionbar() {
-		//ImageView view = (ImageView)findViewById(android.R.id.home);
-		//view.setPadding(10, 10, 10, 10);
-		
-		
-		getSherlock().getActionBar().setHomeButtonEnabled(true);
-    	getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
-    	getSherlock().getActionBar().setTitle(AppInstance.getMember().getName());
-    	getSherlock().getActionBar().setIcon(AppInstance.getMember().getIcon());        
+    	if(getMember() != null) {
+	    	getSupportActionBar().setTitle(getMember().getName());
+	    	getSupportActionBar().setIcon(getMember().getIcon());
+	    	if(star != null) {
+				if(getMember().status == Constants.FAVORITE)
+					star.setIcon(R.drawable.ic_action_important);
+				else
+					star.setIcon(R.drawable.ic_action_not_important);
+	    	}
+    	} else {
+    		getSupportActionBar().setTitle("Reddit");
+    		getSupportActionBar().setIcon(R.drawable.redditmindcrack);
+    	}
 	}
-	
-	
-	private void refreshFragment() {       
-        mPager = (ViewPager)findViewById(R.id.pager);
-        mPager.setAdapter(mAdapter);
- 
-        mIndicator = (TabPageIndicator)findViewById(R.id.indicator);
-        mIndicator.setViewPager(mPager);  
-        BugSenseHandler.addCrashExtraData("FragmentAdapter", "Set");
-	}
-	
-	
-	protected class MembersAdapter extends BaseAdapter {
 
-	    Context context; 
-	    int layoutResourceId;    
-	    List<Member> data = new ArrayList<Member>();
-	    
-	    private LayoutInflater mInflater;
-	    
-	    public MembersAdapter(Context context) {
-	        mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE); 
-	    }
-	    
-	    public void setData(List<Member> data) {
-	    	this.data.addAll(data);
-	    	notifyDataSetChanged();
-	    }
-	    
-	    public void add(Member item)
-	    {
-	    	//Add progress bar, then items before it
-	    	//int index = getCount() > 1? getCount() - 1 : (getCount() > 0? 0: 1);
-	        //youtubeItemList.add(index, item);
-	        notifyDataSetChanged();
-	        
-	    }
-	    
-	    @Override
-        public int getItemViewType(int position) {
-            return data.get(position).getStatus();
-        }
- 
-        @Override
-        public int getViewTypeCount() {
-            return 2;
-        }
-	    
-	    @Override
-	    public View getView(int position, View convertView, ViewGroup parent) {	    	
-	        MemberHolder holder = null;
-	        int type = getItemViewType(position);
-
-            if (convertView == null) {
-                holder = new MemberHolder();
-               /* switch (type) {
-                    case Constants.VISIBLE:
-                        convertView = mInflater.inflate(R.layout.member_item, null);
-                        break;
-                        
-                    case Constants.FAVORITE:
-                        convertView = mInflater.inflate(R.layout.member_item_favorite, null);
-                        break;
-                }*/
-                convertView = mInflater.inflate(R.layout.member_item, null);
-                if(type != Constants.HIDDEN) {
-                	
-	                holder.itemView = (LinearLayout) convertView.findViewById(R.id.member_list_item);
-		            holder.memberIcon = (ImageView) convertView.findViewById(R.id.member_icon);
-		            holder.mamberName = (TextView) convertView.findViewById(R.id.member_name);
-		            
-		            convertView.setTag(holder);
-                }
-                
-            } else {
-                holder = (MemberHolder)convertView.getTag();
-            }
-	        
-	        final Member item = data.get(position);
-	        
-	        if(type != Constants.HIDDEN) {
-	            holder.memberIcon.setImageResource(item.getImage());
-	            holder.mamberName.setText(item.getName());
-	            
-	            //Set the background color for member status
-	            if(type == Constants.FAVORITE) {
-	            	if(item.getId() == AppInstance.getMember().getId()) {
-	            		holder.itemView.setBackgroundResource(R.drawable.member_item_fav_selected);
-	            	}else {
-	            		holder.itemView.setBackgroundResource(R.color.favorite);
-	            	}
-	            } else if(item.getId() == AppInstance.getMember().getId()) {
-	            	holder.itemView.setBackgroundResource(R.drawable.member_item_selected);
-	            } else {
-	            	holder.itemView.setBackgroundResource(R.color.dark_grey);
-	            }
-	        }
-            
-	        return convertView;
-	    }
-	    
-	    class MemberHolder
-	    {
-	    	LinearLayout itemView;
-	        ImageView memberIcon;
-	        TextView mamberName;
-	    }
-
-	    @Override
-        public int getCount() {
-            return data.size();
-        }
- 
-        @Override
-        public Member getItem(int position) {
-            return data.get(position);
-        }
- 
-        @Override
-        public long getItemId(int position) {
-        	//return position;
-            return data.get(position).getId();
-        }
- 
-	}
-	
-	
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-       getSupportMenuInflater().inflate(R.menu.members, menu);
-
-       return super.onCreateOptionsMenu(menu);
-    }
-	
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		if (navDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+		
 	    switch (item.getItemId()) {
-	    case android.R.id.home:
-        	getSlidingMenu().toggle();
-            return true;
-	    case R.id.favorite_button:
-        	toggle_favorite();
-            return true;
-	    case R.id.settings_button:
-	    	Intent settingsIntent = new Intent(Members.this, Settings.class);
-	    	startActivity(settingsIntent);
-            return true; 
-	    case R.id.manage_button:
-	    	Intent manageIntent = new Intent(Members.this, ManageMembers.class);
-	    	startActivity(manageIntent);
-            return true; 
-            
-            
-            
+		    case R.id.favorite_button:
+	        	toggle_favorite();        	
+	            return true;
+		    case R.id.settings_button:
+		    	Intent settingsIntent = new Intent(Members.this, Settings.class);
+		    	startActivity(settingsIntent);
+	            return true; 
+		    case R.id.manage_button:
+		    	Intent manageIntent = new Intent(Members.this, ManageMembers.class);
+		    	startActivity(manageIntent);
+	            return true;
 	    }
 	    return super.onOptionsItemSelected(item);
 	}
 	
-	 class TestFragmentAdapter extends FragmentStatePagerAdapter {     
-	     private int mCount = TAB_TITLES.length;
-	     //private YoutubeFragment youtubeFragment = null;
-	     
-	     public TestFragmentAdapter(FragmentManager fm) {
-	         super(fm);
-	         if (context == null) context = getApplicationContext();
-	         //BugSenseHandler.addCrashExtraData("FragmentAdapter", "Initialized");
-	     }
-	 
-	     @Override
-	     public Fragment getItem(int position) {
-	    	 switch (position) {
-	    	 	case 0:
-	    	 		//Log.e(TAG, "youtube fragment new instance" + (youtubeFragment == null));
-	    	 		//youtubeFragment = YoutubeFragment.newInstance();
-	    	 		return  YoutubeFragment.newInstance();//youtubeFragment;
-	    	 	case 1:
-	    	 		return TwitterFragment.newInstance(AppInstance.getMember());
-	    	 }
-	    	 
-	         return TestFragment.newInstance(String.valueOf(position)); //nothing
-	     }	     
+	
+	
+	
+	////////  H E L P E R S /////////
+	
+	
+	//Members Activity
+    public Member currentMember;
+    public List<Member> mindcrackers; //Sidemenu
+    public List<Member> allMembers; //Manage members (any status)
+	
 
+	//Fragment Variables
+	public int currentYoutubeMemberId = -1;		
+	public List<YoutubeItem> youtubeItems;
+	public String playlistPageToken = "";
+	public boolean isYoutubeItemsUpToDate;
+	
+	public int currentTwitterMemberId = -1;
+	public List<Tweet> twitterFeed;
+	public int twitterPageToken;
+	public boolean isTwitterFeedUpToDate;
+	
+	public List<Post> redditFeed;
+	public String redditPageToken;
+	public boolean isRedditFeedUpToDate;
+	
+	public String redditPost;
+	
+	//Update booleans
+	public boolean isMindcrackersUpToDate;
+    public boolean isAllMembersUpToDate;
+    
+
+
+    
+	// MEMBERS
+	public List<Member> getMindcrackers() {
+		if(mindcrackers == null || mindcrackers.size() == 0 || !isMindcrackersUpToDate) {
+			mindcrackers = MemberORM.getVisibleMembers(this);
+			isMindcrackersUpToDate = true;
+			
+			Log.d("APP","member list changed to up to date");
+		}
+		return mindcrackers;
+	}
+	
+	public List<Member> getAllMembers() {
+		if(allMembers == null || allMembers.size() == 0 || !isAllMembersUpToDate) {
+			allMembers = MemberORM.getMembers(this);
+			isAllMembersUpToDate = true;
+			
+			Log.d("APP","all list changed to up to date");
+		}
+		return allMembers;
+	}
+	
+	
+	public Member getMember() {
+		if(currentMember == null) {
+			SharedPreferences settings = this.getSharedPreferences(Constants.PREFS, 0);
+		    int memberId = settings.getInt(Constants.PREF_MEMBER, -1);
+		    //none set so make it random :D
+		    if(memberId == -1) {
+		    	currentMember = null;
+		    	//Random rnd = new Random();
+		    	//memberId = rnd.nextInt(getMindcrackers().size());
+		    } else {
+			    for(Member member : getMindcrackers()) {
+		        	if(member.getId() == memberId)
+		        		currentMember = member;
+		        }
+		    }
+		    //currentMember = getMindcrackers().get(memberId);
+		}
+		return currentMember;
+	}
+	
+	@SuppressLint("NewApi")
+	public void setMember(int memberId) {
+		SharedPreferences.Editor settings = this.getSharedPreferences(Constants.PREFS, 0).edit();
+        settings.putInt(Constants.PREF_MEMBER,  memberId);
+        if (android.os.Build.VERSION.SDK_INT >= 9) {
+        	settings.apply();
+        } else {
+        	settings.commit();
+        }
+        //Member currently set
+        if(memberId == -1) {
+        	currentMember = null;
+        } else if(getMember() == null || memberId != getMember().getId()) {
+	        for(Member member : getMindcrackers()) {
+	        	if(member.getId() == memberId)
+	        		currentMember = member;
+	        }
+	        isYoutubeItemsUpToDate = false;
+	        isTwitterFeedUpToDate = false;
+        }
+	}
+	
+	//// YOUTUBE ////
+    
+	public int getCurrentYoutubeMemberId() {
+    	if(currentYoutubeMemberId == -1) {
+    		setCurrentYoutubeMemberId(getMember().getId());
+    	}
+		return currentYoutubeMemberId;
+	}
+
+	public void setCurrentYoutubeMemberId(int currentFragmentMemberId) {
+		currentYoutubeMemberId = currentFragmentMemberId;
+	}
+	
+    public boolean checkSetYoutubeMemberIdIsCurrent() {
+    	if(getMember() == null) return false; 
+    	boolean same = currentYoutubeMemberId == getMember().getId();
+    	setCurrentYoutubeMemberId(getMember().getId());    	
+    	return same;
+	}
+	
+	public List<YoutubeItem> getYoutubeItems() {
+		if(youtubeItems == null || youtubeItems.size() == 0 || !isYoutubeItemsUpToDate) {
+			Log.d(TAG, "getting youtube items from db");
+			youtubeItems = YoutubeItemORM.getMemberYoutubeItems(this, getMember().getId());
+			isYoutubeItemsUpToDate = true;
+		}
+		return youtubeItems;
+	}
+	
+	//Update YoutubeItems
+    public void updateYoutubeItems(List<YoutubeItem> newYoutubeItems){
+
+    	//ORM get latest videoid
+    	YoutubeItem latestYoutubeItem = YoutubeItemORM.getMemberLatestYoutubeItem(this, getMember().getId());
+    	
+    	
+    	if(latestYoutubeItem == null) {
+    		YoutubeItemORM.insertMemberYoutubeItems(this, newYoutubeItems);
+    		Log.d(TAG, "adding youtube items");
+    		isYoutubeItemsUpToDate = false;
+    	}else {
+    		//Compare the first NewYoutubeItem video with the latest
+    		if(!newYoutubeItems.get(0).getVideoId().equals(latestYoutubeItem.getVideoId())) {
+    			YoutubeItemORM.updateMemberYoutubeItems(this, newYoutubeItems);
+    			isYoutubeItemsUpToDate = false;
+    			Log.d(TAG, "updating youtube items");
+    		} else {
+    			Log.d(TAG, "youtube items already up to date");
+    			isYoutubeItemsUpToDate = true;
+    		}
+    	}
+    }
+    
+    
+    //// TWITTER ////
+    
+    
+    public int getCurrentTwitterMemberId() {
+    	if(currentTwitterMemberId == -1) {
+    		setCurrentTwitterMemberId(getMember().getId());
+    	}
+		return currentTwitterMemberId;
+	}
+
+	public void setCurrentTwitterMemberId(int currentFragmentMemberId) {
+		currentTwitterMemberId = currentFragmentMemberId;
+	}
+	
+    public boolean checkSetTwitterMemberIdIsCurrent() {
+    	boolean same = currentTwitterMemberId == getMember().getId();
+    	setCurrentTwitterMemberId(getMember().getId());    	
+    	return same;    	
+	}
+    
+	public List<Tweet> getTwitterFeed() {
+		if(twitterFeed == null || twitterFeed.size() == 0 || !isTwitterFeedUpToDate) {
+			Log.d(TAG, "getting twitter feed from db");
+			twitterFeed = TwitterORM.getMemberTwitterFeed(this, getMember().getId());
+			isTwitterFeedUpToDate = true;
+		}
+		return twitterFeed;
+	}
+    
+	public void updateTwitterFeed(List<Tweet> tweets) {
+		//ORM get latest tweet
+    	Tweet latestTweet = TwitterORM.getMemberLatestTwitterFeed(this, getMember().getId());
+    	
+    	
+    	if(latestTweet == null) {
+    		TwitterORM.insertMemberTwitterFeed(this, tweets);
+    		Log.d(TAG, "adding youtube items");
+    		isTwitterFeedUpToDate = false;
+    	}else {
+    		//Compare the first NewYoutubeItem video with the latest
+    		if(tweets.get(0).getTweetId() != latestTweet.getTweetId()) {
+    			TwitterORM.updateMemberTwitterFeed(this, tweets);
+    			isTwitterFeedUpToDate = false;
+    			Log.d(TAG, "updating twitter feed");
+    		} else {
+    			Log.d(TAG, "twitter feed already up to date");
+    			isTwitterFeedUpToDate = true;
+    		}
+    	}
+	}
+	
+	
+	//// REDDIT ////
+	
+	//TODO go to database for reddit
+	public List<Post> getRedditFeed() {
+		if(redditFeed == null || redditFeed.size() == 0 || !isRedditFeedUpToDate) {
+			Log.d(TAG, "getting reddit feed from db");
+			redditFeed = RedditORM.getRedditFeed(this);
+			isRedditFeedUpToDate = true;
+		}
+		return redditFeed;
+	}
+    
+	public void updateRedditFeed(List<Post> posts) {
+		//ORM get latest tweet
+    	Post latestPost = RedditORM.getLatestRedditFeed(this);
+    	
+    	
+    	if(latestPost == null) {
+    		RedditORM.insertRedditFeed(this, posts);
+    		Log.d(TAG, "adding youtube items");
+    		isRedditFeedUpToDate = false;
+    	}else {
+    		//Compare the first NewYoutubeItem video with the latest
+    		if(posts.get(0).getId() != latestPost.getId()) {
+    			RedditORM.insertRedditFeed(this, posts);
+    			isRedditFeedUpToDate = false;
+    			Log.d(TAG, "updating reddit feed");
+    		} else {
+    			Log.d(TAG, "reddit feed already up to date");
+    			isRedditFeedUpToDate = true;
+    		}
+    	}
+	}
+	
+	
+	//// MEMBER ////
+	
+	//Update single Member from Members
+    public void updateCurrentMember(){
+    	MemberORM.updateMember(this, getMember());
+    	isAllMembersUpToDate = false;
+    }
+    
+	//Update all Members from MamnageMember
+    public void updateMembers(List<Member> members){
+
+    	for(int i = 0; i < members.size(); i++) {
+    		members.get(i).setSort(i);
+    		Log.d("Data", members.get(i).toDatabaseString());
+    	}
+    	
+    	MemberORM.updateMembers(this, members);
+    	isMindcrackersUpToDate = false;
+    	isAllMembersUpToDate = false;
+    }
+
+	
+	
+	
+	
+	class FragPagerAdapter extends FragmentStatePagerAdapter {
+		private final String[] REDDIT_TABS = new String[] { "Reddit", "Post" };
+		private final String[] MEMBER_TABS = new String[] { "Youtube", "Twitter" };
+		
+	    private int mCount = MEMBER_TABS.length;
+	    private int pos;
+	    YoutubeFragment youtubeFragment;
+	    TwitterFragment twitterFragment;
+	    RedditFragment redditFragment;
+	    Members act;
+	    
+	    public FragPagerAdapter(FragmentManager fm, Members activity) {
+	        super(fm);	
+	        act = activity;
+	    }
+	    
+	    @Override
+	    public Fragment getItem(int position) {
+	    	pos = position;
+	    	Log.d("FragPagerAdapter","get item called: "+position);
+	    	if(getMember() != null) {
+		    	switch (position) {
+		    		case 0:
+		    	 		youtubeFragment = YoutubeFragment.newInstance(act);
+		    	 		return youtubeFragment;
+		    	 	case 1:
+		    	 		twitterFragment = TwitterFragment.newInstance();
+		    	 		return twitterFragment;
+		    	}
+	    	} else {
+	    		switch (position) {
+	    		case 0:
+	    			redditFragment =  RedditFragment.newInstance();
+	    			return redditFragment;
+	    		}
+	    	}
+	    	
+	    	 
+	        return TestFragment.newInstance(String.valueOf(position)); //This should never happen
+	    }
+
+	    public void update() {
+	    	Log.d("FragPagerAdapter","update called: "+pos);
+	    	if(getMember() != null) {
+	    		if(youtubeFragment != null) youtubeFragment.update(); else youtubeFragment = YoutubeFragment.newInstance(act);
+	    		if(twitterFragment != null) twitterFragment.update(); else twitterFragment = TwitterFragment.newInstance();
+		    	/*switch (pos) {
+		    		case 0:
+		    	 		youtubeFragment.update();
+		    	 	case 1:
+		    	 		twitterFragment.update();
+		    	}*/
+	    	} else {
+	    		//switch (pos) {
+	    		//case 0:
+	    			if(redditFragment != null) redditFragment.update(); else redditFragment = RedditFragment.newInstance();
+	    		//}
+	    	}
+	    }
+	    
 		@Override
-	     public int getCount() {
-	         return mCount;
-	     }
-	      
-	     @Override
-	     public CharSequence getPageTitle(int position) {
-	      return TAB_TITLES[position];
-	     }
-	 }
+	    public int getCount() {
+	        return mCount;
+	    }
+	    
+	    @Override
+	    public CharSequence getPageTitle(int position) {
+	    	if(getMember() != null) {
+	    		return MEMBER_TABS[position];
+	    	} else {
+	    		return REDDIT_TABS[position];
+	    	}
+	    }
+	    
+	   // @Override public int getItemPosition (Object object) { return POSITION_NONE; }
+	    
+	    @Override
+	    public void unregisterDataSetObserver(DataSetObserver observer) {
+	        if (observer != null) {
+	            super.unregisterDataSetObserver(observer);
+	        }
+	    }
+	}
 		
     
 

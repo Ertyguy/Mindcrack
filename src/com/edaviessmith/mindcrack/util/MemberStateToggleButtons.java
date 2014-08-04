@@ -1,8 +1,6 @@
 package com.edaviessmith.mindcrack.util;
 
 
-import com.edaviessmith.mindcrack.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -12,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import com.edaviessmith.mindcrack.R;
 
 
 public class MemberStateToggleButtons extends ToggleButton {
