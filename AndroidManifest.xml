@@ -30,7 +30,7 @@
         </activity>
         
         <activity
-            android:name="com.edaviessmith.mindcrack.Reddit"
+            android:name="com.edaviessmith.mindcrack.Reddits"
             android:label="@string/reddit" >
         </activity>
         

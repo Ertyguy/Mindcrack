@@ -26,19 +26,19 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.Post;
+import com.edaviessmith.mindcrack.data.RedditPost;
 import com.edaviessmith.mindcrack.data.Tweet;
 import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
-import com.edaviessmith.mindcrack.db.RedditORM;
+import com.edaviessmith.mindcrack.db.RedditPostORM;
 import com.edaviessmith.mindcrack.db.TwitterORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
 import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.SlidingTabLayout;
 
 
-public class Reddit extends ActionBarActivity {
-	public static String TAG = "Reddit";
+public class Reddits extends ActionBarActivity {
+	public static String TAG = "Reddits";
 
 	FragPagerAdapter fragmentPagerAdapter;
     ViewPager viewPager;
@@ -227,11 +227,11 @@ public class Reddit extends ActionBarActivity {
 	    switch (item.getItemId()) {
 		    
 		    case R.id.settings_button:
-		    	Intent settingsIntent = new Intent(Reddit.this, Settings.class);
+		    	Intent settingsIntent = new Intent(Reddits.this, Settings.class);
 		    	startActivity(settingsIntent);
 	            return true; 
 		    case R.id.manage_button:
-		    	Intent manageIntent = new Intent(Reddit.this, ManageMembers.class);
+		    	Intent manageIntent = new Intent(Reddits.this, ManageMembers.class);
 		    	startActivity(manageIntent);
 	            return true;
 	    }
@@ -261,7 +261,7 @@ public class Reddit extends ActionBarActivity {
 	public int twitterPageToken;
 	public boolean isTwitterFeedUpToDate;
 	
-	public List<Post> redditFeed;
+	public List<RedditPost> redditFeed;
 	public String redditPageToken;
 	public boolean isRedditFeedUpToDate;
 	
@@ -447,28 +447,28 @@ public class Reddit extends ActionBarActivity {
 	//// REDDIT ////
 	
 	//TODO go to database for reddit
-	public List<Post> getRedditFeed() {
+	public List<RedditPost> getRedditFeed() {
 		if(redditFeed == null || redditFeed.size() == 0 || !isRedditFeedUpToDate) {
 			Log.d(TAG, "getting reddit feed from db");
-			redditFeed = RedditORM.getRedditFeed(this);
+			redditFeed = RedditPostORM.getRedditFeed(this);
 			isRedditFeedUpToDate = true;
 		}
 		return redditFeed;
 	}
     
-	public void updateRedditFeed(List<Post> posts) {
+	public void updateRedditFeed(List<RedditPost> posts) {
 		//ORM get latest tweet
-    	Post latestPost = RedditORM.getLatestRedditFeed(this);
+    	RedditPost latestPost = RedditPostORM.getLatestRedditFeed(this);
     	
     	
     	if(latestPost == null) {
-    		RedditORM.insertRedditFeed(this, posts);
+    		RedditPostORM.insertRedditFeed(this, posts);
     		Log.d(TAG, "adding youtube items");
     		isRedditFeedUpToDate = false;
     	}else {
     		//Compare the first NewYoutubeItem video with the latest
     		if(posts.get(0).getId() != latestPost.getId()) {
-    			RedditORM.insertRedditFeed(this, posts);
+    			RedditPostORM.insertRedditFeed(this, posts);
     			isRedditFeedUpToDate = false;
     			Log.d(TAG, "updating reddit feed");
     		} else {
@@ -513,9 +513,9 @@ public class Reddit extends ActionBarActivity {
 	    YoutubeFragment youtubeFragment;
 	    TwitterFragment twitterFragment;
 	    RedditFragment redditFragment;
-	    Reddit act;
+	    Reddits act;
 	    
-	    public FragPagerAdapter(FragmentManager fm, Reddit activity) {
+	    public FragPagerAdapter(FragmentManager fm, Reddits activity) {
 	        super(fm);	
 	        act = activity;
 	    }

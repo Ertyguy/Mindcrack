@@ -26,11 +26,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.Post;
+import com.edaviessmith.mindcrack.data.RedditPost;
 import com.edaviessmith.mindcrack.data.Tweet;
 import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
-import com.edaviessmith.mindcrack.db.RedditORM;
+import com.edaviessmith.mindcrack.db.RedditPostORM;
 import com.edaviessmith.mindcrack.db.TwitterORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
 import com.edaviessmith.mindcrack.R;
@@ -115,7 +115,7 @@ public class Members extends ActionBarActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent redditIntent = new Intent(Members.this, Reddit.class);
+				Intent redditIntent = new Intent(Members.this, Reddits.class);
 		    	startActivity(redditIntent);
 		    	
 				/*setMember(-1);
@@ -268,7 +268,7 @@ public class Members extends ActionBarActivity {
 	public int twitterPageToken;
 	public boolean isTwitterFeedUpToDate;
 	
-	public List<Post> redditFeed;
+	public List<RedditPost> redditFeed;
 	public String redditPageToken;
 	public boolean isRedditFeedUpToDate;
 	
@@ -454,28 +454,28 @@ public class Members extends ActionBarActivity {
 	//// REDDIT ////
 	
 	//TODO go to database for reddit
-	public List<Post> getRedditFeed() {
+	public List<RedditPost> getRedditFeed() {
 		if(redditFeed == null || redditFeed.size() == 0 || !isRedditFeedUpToDate) {
 			Log.d(TAG, "getting reddit feed from db");
-			redditFeed = RedditORM.getRedditFeed(this);
+			redditFeed = RedditPostORM.getRedditFeed(this);
 			isRedditFeedUpToDate = true;
 		}
 		return redditFeed;
 	}
     
-	public void updateRedditFeed(List<Post> posts) {
+	public void updateRedditFeed(List<RedditPost> posts) {
 		//ORM get latest tweet
-    	Post latestPost = RedditORM.getLatestRedditFeed(this);
+    	RedditPost latestPost = RedditPostORM.getLatestRedditFeed(this);
     	
     	
     	if(latestPost == null) {
-    		RedditORM.insertRedditFeed(this, posts);
+    		RedditPostORM.insertRedditFeed(this, posts);
     		Log.d(TAG, "adding youtube items");
     		isRedditFeedUpToDate = false;
     	}else {
     		//Compare the first NewYoutubeItem video with the latest
     		if(posts.get(0).getId() != latestPost.getId()) {
-    			RedditORM.insertRedditFeed(this, posts);
+    			RedditPostORM.insertRedditFeed(this, posts);
     			isRedditFeedUpToDate = false;
     			Log.d(TAG, "updating reddit feed");
     		} else {

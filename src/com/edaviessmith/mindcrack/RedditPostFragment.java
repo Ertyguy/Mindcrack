@@ -35,7 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.edaviessmith.mindcrack.data.Post;
+import com.edaviessmith.mindcrack.data.RedditPost;
 import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.ImageLoader;
 import com.edaviessmith.mindcrack.util.RemoteData;
@@ -66,14 +66,14 @@ public class RedditPostFragment extends Fragment {
 	private ProgressBar loadingProgressBar;
 	private ImageView loadingImage;
 	
-	private static List<Post> tweetList;
+	private static List<RedditPost> tweetList;
 	private ImageLoader imageLoader;
 
 	private static boolean beginningOfList;
 	private static boolean endOfList;
 	private static boolean searchBusy;
 	private static boolean waitingToSearch;
-	private static Post loading;
+	private static RedditPost loading;
 
 	private static boolean isDeviceTablet;
 	    
@@ -91,7 +91,7 @@ public class RedditPostFragment extends Fragment {
         context = view.getContext();
         imageLoader = new ImageLoader(context);
         
-        loading = new Post();
+        loading = new RedditPost();
         
         if(!Util.isNetworkAvailable()) {
         	//Toast.makeText(context, "Cannot connect to the internet", Toast.LENGTH_LONG).show();
@@ -112,13 +112,13 @@ public class RedditPostFragment extends Fragment {
     		beginningOfList = true;
 			
 
-			tweetList = new ArrayList<Post>(AppInstance.getRedditFeed());
+			tweetList = new ArrayList<RedditPost>(AppInstance.getRedditFeed());
 	    	// Add loading Post
 	    	tweetList.add(tweetList.size(), loading);
 	    		    	
 	    	if(adapter != null) {
 	    		adapter.clearItems();
-			 	for(Post item : tweetList) {
+			 	for(RedditPost item : tweetList) {
 			 		adapter.add(item);
 			 	}
 			}
@@ -142,13 +142,13 @@ public class RedditPostFragment extends Fragment {
 		
     	
 		if(tweetList == null) {
-			tweetList = new ArrayList<Post>(AppInstance.getRedditFeed());
+			tweetList = new ArrayList<RedditPost>(AppInstance.getRedditFeed());
 	    	// Add loading Post
 	    	tweetList.add(tweetList.size(), loading);
 	    	
 	    	if(adapter != null) {
 	    		adapter.clearItems();
-			 	for(Post item : tweetList) {
+			 	for(RedditPost item : tweetList) {
 			 		adapter.add(item);
 			 	}
 			}
@@ -229,13 +229,13 @@ public class RedditPostFragment extends Fragment {
     
     
     
-    protected class RedditAdapter extends ArrayAdapter<Post> {
+    protected class RedditAdapter extends ArrayAdapter<RedditPost> {
 
 	    Context context; 
 	    int layoutResourceId;    
-	    List<Post> data = new ArrayList<Post>();
+	    List<RedditPost> data = new ArrayList<RedditPost>();
 	    
-	    public RedditAdapter(Context context, int layoutResourceId, List<Post> data) {
+	    public RedditAdapter(Context context, int layoutResourceId, List<RedditPost> data) {
 	        super(context, layoutResourceId, tweetList);
 	        this.layoutResourceId = layoutResourceId;
 	        this.context = context;
@@ -247,7 +247,7 @@ public class RedditPostFragment extends Fragment {
 	    	return data.size();
 	    }
 	    
-	    public void add(Post item)
+	    public void add(RedditPost item)
 	    {
 	    	if(getIndex() < data.size()) {
 	    		data.add(getIndex(), item);
@@ -304,7 +304,7 @@ public class RedditPostFragment extends Fragment {
 	        }
 	        
 	        
-	        final Post item = data.get(position);
+	        final RedditPost item = data.get(position);
 	        	        
 	        //Regex and highlight @			
 			if(!TextUtils.isEmpty(item.getTitle())) {
@@ -385,7 +385,7 @@ public class RedditPostFragment extends Fragment {
     
     
 
-	public void onTaskCompleted(List<Post> redditFeed) {
+	public void onTaskCompleted(List<RedditPost> redditFeed) {
 		
 		if(loadingLayout.getVisibility() == View.VISIBLE) {
 			loadingLayout.setVisibility(View.GONE);
@@ -398,7 +398,7 @@ public class RedditPostFragment extends Fragment {
 	        	beginningOfList = false;
 	        	Log.d(TAG, "adding items to updateYoutubeItems");
 	        } else {
-	        	for(Post item : redditFeed) {
+	        	for(RedditPost item : redditFeed) {
 	        		adapter.add(item);
 				}
 	        }
@@ -408,7 +408,7 @@ public class RedditPostFragment extends Fragment {
 	        if(!AppInstance.isRedditFeedUpToDate) {
 	        	adapter.clearItems(); //Clear all items currently in the adapter
 	        	
-	        	for(Post item : redditFeed) {
+	        	for(RedditPost item : redditFeed) {
 	        		adapter.add(item);
 				}
 	        	AppInstance.isRedditFeedUpToDate = true;
@@ -438,7 +438,7 @@ public class RedditPostFragment extends Fragment {
 	    private final JsonFactory JSON_FACTORY = new JacksonFactory();
 	    private YouTube youtube;
 	    
-	    List<Post> redditFeed;
+	    List<RedditPost> redditFeed;
 	    private RedditPostFragment redditFragment;
 	    
 	    private final String URL= "http://www.reddit.com/r/mindcrack/.json";
@@ -469,12 +469,12 @@ public class RedditPostFragment extends Fragment {
 	    } 
  
 	    
-	    public List<Post> getRecentRedditFeed(String pageToken) {
+	    public List<RedditPost> getRecentRedditFeed(String pageToken) {
 	    	try {
 		        String rawUrl = URL + (TextUtils.isEmpty(pageToken)? "": ("?after="+pageToken));
 	    		
 	    		String raw=RemoteData.readContents(rawUrl);
-	            List<Post> list = new ArrayList<Post>();
+	            List<RedditPost> list = new ArrayList<RedditPost>();
 	            try{
 	                JSONObject data=new JSONObject(raw).getJSONObject("data");
 	                JSONArray children=data.getJSONArray("children");
@@ -485,7 +485,7 @@ public class RedditPostFragment extends Fragment {
 	                for(int i=0;i<children.length();i++){
 	                    JSONObject cur=children.getJSONObject(i).getJSONObject("data");
 	                    
-	                    Post post = new Post();
+	                    RedditPost post = new RedditPost();
 	                    post.setId(cur.optString("id"));
 	                    post.setTitle(cur.optString("title"));
 	                    post.setTitleFlair(cur.optString("link_flair_text"));

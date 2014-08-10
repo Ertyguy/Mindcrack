@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.data.Member;
+import com.edaviessmith.mindcrack.data.Reddit;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -29,9 +30,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(YoutubeItemORM.SQL_CREATE_TABLE);  
         db.execSQL(TwitterORM.SQL_CREATE_TABLE);
         db.execSQL(RedditORM.SQL_CREATE_TABLE);
+        db.execSQL(RedditPostORM.SQL_CREATE_TABLE);
 
-        // Put mindcrack members into database
-        createMembers(db);
+        populateTables(db);
 	}
 
 	@Override
@@ -40,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(YoutubeItemORM.SQL_DROP_TABLE);
 		db.execSQL(TwitterORM.SQL_DROP_TABLE);
 		db.execSQL(RedditORM.SQL_DROP_TABLE);
+		db.execSQL(RedditPostORM.SQL_DROP_TABLE);
 
 		
 		if(oldVersion <= 1) {
@@ -52,18 +54,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		
 		
 		db.execSQL(YoutubeItemORM.SQL_CREATE_TABLE);  
-        db.execSQL(TwitterORM.SQL_CREATE_TABLE);  		
+        db.execSQL(TwitterORM.SQL_CREATE_TABLE);  
         db.execSQL(RedditORM.SQL_CREATE_TABLE);
+        db.execSQL(RedditPostORM.SQL_CREATE_TABLE);
 	}
 	
 	
-	public static void createMembers(SQLiteDatabase sqLiteDatabase) {
+	public static void populateTables(SQLiteDatabase sqLiteDatabase) {
         
         try {
         	sqLiteDatabase.beginTransaction();
         	for(Member member : mindcrackers) {
             	sqLiteDatabase.insert(MemberORM.TABLE, null, MemberORM.memberInsertToContentValues(context, member));
             }
+        	for(Reddit reddit : reddits) {
+            	sqLiteDatabase.insert(RedditORM.TABLE, null, RedditORM.redditInsertToContentValues(context, reddit));
+            }
+        	
         	sqLiteDatabase.setTransactionSuccessful();
         }catch (Exception e) {
             e.printStackTrace();
@@ -123,6 +130,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         add(new Member(27, "W92Baj", R.drawable.baj, R.drawable.baj_icon, "UUB3hoa-iGe3FVLBw1PmRRug", "W92Baj"));
         add(new Member(28, "Zisteau", R.drawable.zisteau, R.drawable.zisteau_icon, "UUewxof_QqDdqVdXY1BaDtqQ", "zisteau"));
         add(new Member(29, "Podcast", R.drawable.ic_launcher, R.drawable.ic_launcher, "UUAWQEAjn8udSFKN6D4NlqWQ", "mindcracklp"));
+    }};
+    
+    @SuppressWarnings("serial")
+	static List<Reddit> reddits = new ArrayList<Reddit>() {{
+		//			//Id	//Name			//URL				//Icon
+		add(new Reddit(0, "Mindcrack", "mindcrack", R.drawable.ic_launcher, R.drawable.ic_launcher));
+		add(new Reddit(1, "Ultra Hardcore", "ultrahardcore", R.drawable.ultrahardcore, R.drawable.ultrahardcore));
+		add(new Reddit(2, "Play Mindcrack", "PlayMindcrack", R.drawable.play_mindcrack, R.drawable.play_mindcrack));
+		add(new Reddit(3, "Crackpack", "crackpack", R.drawable.ic_launcher, R.drawable.ic_launcher));
+		//add(new Reddit(1, "Play Mindcrack", "PlayMindcrack", R.drawable.ic_launcher));
     }};
     
 }

@@ -1,6 +1,6 @@
 package com.edaviessmith.mindcrack.data;
 
-public class Post {
+public class RedditPost {
 
 	String id;	//name is id
 	String title;

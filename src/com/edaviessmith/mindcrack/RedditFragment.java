@@ -36,7 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.edaviessmith.mindcrack.data.Post;
+import com.edaviessmith.mindcrack.data.RedditPost;
 import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.ImageLoader;
 import com.edaviessmith.mindcrack.util.MediaFragment;
@@ -68,14 +68,14 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	private ProgressBar loadingProgressBar;
 	private ImageView loadingImage;
 	
-	private static List<Post> postList;
+	private static List<RedditPost> postList;
 	private ImageLoader imageLoader;
 
 	private static boolean beginningOfList;
 	private static boolean endOfList;
 	private static boolean searchBusy;
 	private static boolean waitingToSearch;
-	private static Post loading;
+	private static RedditPost loading;
 
 	private static boolean isDeviceTablet;
 	private static RedditFragment redditFragment;
@@ -97,7 +97,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
         imageLoader = new ImageLoader(context);
         isDeviceTablet = Util.isDeviceTablet();
         
-        loading = new Post();
+        loading = new RedditPost();
         
         if(!Util.isNetworkAvailable()) {
         	//Toast.makeText(context, "Cannot connect to the internet", Toast.LENGTH_LONG).show();
@@ -117,13 +117,13 @@ public class RedditFragment extends Fragment implements MediaFragment {
 			//AppInstance.redditPageToken = "";
     		beginningOfList = true;
 			
-    		postList = new ArrayList<Post>(AppInstance.getRedditFeed());
+    		postList = new ArrayList<RedditPost>(AppInstance.getRedditFeed());
 	    	// Add loading Post
 	    	postList.add(postList.size(), loading);
 	    		    	
 	    	if(adapter != null) {
 	    		adapter.clearItems();
-			 	for(Post item : postList) {
+			 	for(RedditPost item : postList) {
 			 		adapter.add(item);
 			 	}
 			}
@@ -147,13 +147,13 @@ public class RedditFragment extends Fragment implements MediaFragment {
 		
     	
 		if(postList == null) {
-			postList = new ArrayList<Post>(AppInstance.getRedditFeed());
+			postList = new ArrayList<RedditPost>(AppInstance.getRedditFeed());
 	    	// Add loading Post
 	    	postList.add(postList.size(), loading);
 	    	
 	    	if(adapter != null) {
 	    		adapter.clearItems();
-			 	for(Post item : postList) {
+			 	for(RedditPost item : postList) {
 			 		adapter.add(item);
 			 	}
 			}
@@ -252,13 +252,13 @@ public class RedditFragment extends Fragment implements MediaFragment {
     }
     
     
-    protected class RedditAdapter extends ArrayAdapter<Post> {
+    protected class RedditAdapter extends ArrayAdapter<RedditPost> {
 
 	    Context context; 
 	    int layoutResourceId;    
-	    List<Post> data = new ArrayList<Post>();
+	    List<RedditPost> data = new ArrayList<RedditPost>();
 	    
-	    public RedditAdapter(Context context, int layoutResourceId, List<Post> data) {
+	    public RedditAdapter(Context context, int layoutResourceId, List<RedditPost> data) {
 	        super(context, layoutResourceId, postList);
 	        this.layoutResourceId = layoutResourceId;
 	        this.context = context;
@@ -270,7 +270,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	    	return data.size();
 	    }
 	    
-	    public void add(Post item)
+	    public void add(RedditPost item)
 	    {
 	    	if(getIndex() < data.size()) {
 	    		data.add(getIndex(), item);
@@ -327,7 +327,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	        }
 	        
 	        
-	        final Post item = data.get(position);
+	        final RedditPost item = data.get(position);
 	        	        
 	        //Regex and highlight @			
 			if(!TextUtils.isEmpty(item.getTitle())) {
@@ -408,7 +408,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
     
     
 
-	public void onTaskCompleted(List<Post> redditFeed) {
+	public void onTaskCompleted(List<RedditPost> redditFeed) {
 		
 		if(loadingLayout.getVisibility() == View.VISIBLE) {
 			loadingLayout.setVisibility(View.GONE);
@@ -421,7 +421,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	        	beginningOfList = false;
 	        	Log.d(TAG, "adding items to updateYoutubeItems");
 	        } else {
-	        	for(Post item : redditFeed) {
+	        	for(RedditPost item : redditFeed) {
 	        		adapter.add(item);
 				}
 	        }
@@ -431,7 +431,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	        if(!AppInstance.isRedditFeedUpToDate) {
 	        	adapter.clearItems(); //Clear all items currently in the adapter
 	        	
-	        	for(Post item : redditFeed) {
+	        	for(RedditPost item : redditFeed) {
 	        		adapter.add(item);
 				}
 	        	AppInstance.isRedditFeedUpToDate = true;
@@ -461,7 +461,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	    private final JsonFactory JSON_FACTORY = new JacksonFactory();
 	    private YouTube youtube;
 	    
-	    List<Post> redditFeed;
+	    List<RedditPost> redditFeed;
 	    private RedditFragment redditFragment;
 	    
 	    private final String URL= "http://www.reddit.com/r/mindcrack/.json";
@@ -492,12 +492,12 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	    } 
  
 	    
-	    public List<Post> getRecentRedditFeed(String pageToken) {
+	    public List<RedditPost> getRecentRedditFeed(String pageToken) {
 	    	try {
 		        String rawUrl = URL + (TextUtils.isEmpty(pageToken)? "": ("?after="+pageToken));
 	    		
 	    		String raw=RemoteData.readContents(rawUrl);
-	            List<Post> list = new ArrayList<Post>();
+	            List<RedditPost> list = new ArrayList<RedditPost>();
 	            try{
 	                JSONObject data=new JSONObject(raw).getJSONObject("data");
 	                JSONArray children=data.getJSONArray("children");
@@ -508,7 +508,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
 	                for(int i=0;i<children.length();i++){
 	                    JSONObject cur=children.getJSONObject(i).getJSONObject("data");
 	                    
-	                    Post post = new Post();
+	                    RedditPost post = new RedditPost();
 	                    post.setId(cur.optString("id"));
 	                    post.setTitle(cur.optString("title"));
 	                    post.setTitleFlair(cur.optString("link_flair_text"));

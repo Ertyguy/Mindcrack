@@ -9,11 +9,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.edaviessmith.mindcrack.data.Member;
-import com.edaviessmith.mindcrack.data.Post;
+import com.edaviessmith.mindcrack.data.RedditPost;
 import com.edaviessmith.mindcrack.data.Tweet;
 import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
-import com.edaviessmith.mindcrack.db.RedditORM;
+import com.edaviessmith.mindcrack.db.RedditPostORM;
 import com.edaviessmith.mindcrack.db.TwitterORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
 
@@ -39,7 +39,7 @@ public class AppInstance extends Application{
 	public static int twitterPageToken;
 	public static boolean isTwitterFeedUpToDate;
 	
-	public static List<Post> redditFeed;
+	public static List<RedditPost> redditFeed;
 	public static String redditPageToken;
 	public static boolean isRedditFeedUpToDate;
 	
@@ -235,28 +235,28 @@ public class AppInstance extends Application{
 	//// REDDIT ////
 	
 	//TODO go to database for reddit
-	public static List<Post> getRedditFeed() {
+	public static List<RedditPost> getRedditFeed() {
 		if(redditFeed == null || redditFeed.size() == 0 || !isRedditFeedUpToDate) {
 			Log.d(TAG, "getting reddit feed from db");
-			redditFeed = RedditORM.getRedditFeed(getContext());
+			redditFeed = RedditPostORM.getRedditFeed(getContext());
 			isRedditFeedUpToDate = true;
 		}
 		return redditFeed;
 	}
     
-	public static void updateRedditFeed(List<Post> posts) {
+	public static void updateRedditFeed(List<RedditPost> posts) {
 		//ORM get latest tweet
-    	Post latestPost = RedditORM.getLatestRedditFeed(getContext());
+    	RedditPost latestPost = RedditPostORM.getLatestRedditFeed(getContext());
     	
     	
     	if(latestPost == null) {
-    		RedditORM.insertRedditFeed(getContext(), posts);
+    		RedditPostORM.insertRedditFeed(getContext(), posts);
     		Log.d(TAG, "adding youtube items");
     		isRedditFeedUpToDate = false;
     	}else {
     		//Compare the first NewYoutubeItem video with the latest
     		if(posts.get(0).getId() != latestPost.getId()) {
-    			RedditORM.insertRedditFeed(getContext(), posts);
+    			RedditPostORM.insertRedditFeed(getContext(), posts);
     			isRedditFeedUpToDate = false;
     			Log.d(TAG, "updating reddit feed");
     		} else {
