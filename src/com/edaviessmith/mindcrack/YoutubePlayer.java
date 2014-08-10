@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -20,7 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.edaviessmith.mindcrack.R;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.OnInitializedListener;
@@ -39,7 +41,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 
-public class YoutubePlayer extends SherlockFragmentActivity {
+public class YoutubePlayer extends FragmentActivity {
 	
 	private View view;
     private String video;    
@@ -55,7 +57,7 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.youtube_player);
 	    // Show the Up button in the action bar.
-	 	getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
+	 	//getSherlock().getActionBar().setDisplayHomeAsUpEnabled(true);
 	 	
 	    FragmentManager fragmentManager = getSupportFragmentManager();
 	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -112,7 +114,6 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 						displayActionbarNav();
 					}
             		
-            		
             	});
             }
 
@@ -137,8 +138,10 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 	
 	
 	private void refreshActionbar() {
-		getSherlock().getActionBar().setTitle(AppInstance.getMember().name);
-		getSherlock().getActionBar().setIcon(AppInstance.getMember().icon);      
+		if(AppInstance.getMember() != null) {
+			//getSherlock().getActionBar().setTitle(AppInstance.getMember().name);
+			//getSherlock().getActionBar().setIcon(AppInstance.getMember().icon);
+		}
 	}
 	
 	
@@ -146,7 +149,7 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 	private void displayActionbarNav() {
 		
 		if(!playing || getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {			
-			getSherlock().getActionBar().show();			
+			//getSherlock().getActionBar().show();			
 		    
 		    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		    content_layout.setVisibility(LinearLayout.VISIBLE);
@@ -161,7 +164,7 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 		}
 		
 		if (playing && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			getSherlock().getActionBar().hide();
+			//getSherlock().getActionBar().hide();
 			
 		    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		    content_layout.setVisibility(LinearLayout.GONE);
@@ -177,7 +180,7 @@ public class YoutubePlayer extends SherlockFragmentActivity {
 		}
 	}
 	@Override
-    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
             NavUtils.navigateUpFromSameTask(this);

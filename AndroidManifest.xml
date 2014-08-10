@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.edaviessmith.mindcrack"
-    android:versionCode="11"
-    android:versionName="1.9" >
+    android:versionCode="12"
+    android:versionName="1.9.1" >
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -17,12 +17,11 @@
         android:name="com.edaviessmith.mindcrack.AppInstance"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/mindcrack"
-
-        android:theme="@style/Theme.VPI" >
+        android:label="@string/mindcrack" 
+        android:theme="@style/AppTheme">
         
         <activity
-            android:name="com.edaviessmith.mindcrack.Members"
+            android:name="com.edaviessmith.mindcrack.Hub"
             android:label="@string/mindcrack" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,23 +30,18 @@
         </activity>
         
         <activity
-            android:name="com.edaviessmith.mindcrack.YoutubeFragment"
-            android:label="@string/youtube_title"
-            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.edaviessmith.mindcrack.Members" />
+            android:name="com.edaviessmith.mindcrack.Reddit"
+            android:label="@string/reddit" >
         </activity>
+        
+        <activity
+            android:name="com.edaviessmith.mindcrack.YoutubeFragment"
+            android:label="@string/youtube_title" />
         
         <activity
             android:name="com.edaviessmith.mindcrack.YoutubePlayer"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/youtube_title"
-            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.edaviessmith.mindcrack.Members" />
-        </activity>
+            android:label="@string/youtube_title" />
         
         <activity
             android:name="com.edaviessmith.mindcrack.TwitterFragment"
@@ -56,30 +50,15 @@
         
         <activity
             android:name="com.edaviessmith.mindcrack.Settings"
-            android:label="@string/settings_title"
-            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.edaviessmith.mindcrack.Members" />
-        </activity>
+            android:label="@string/settings_title" />
         
         <activity
             android:name="com.edaviessmith.mindcrack.ManageMembers"
-            android:label="@string/managemembers_title"
-            android:parentActivityName="com.edaviessmith.mindcrack.Members" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.edaviessmith.mindcrack.Members" />
-        </activity>
+            android:label="@string/managemembers_title" />
         
         <activity
             android:name="com.edaviessmith.mindcrack.About"
-            android:label="@string/about_title"
-            android:parentActivityName="com.edaviessmith.mindcrack.Settings" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.edaviessmith.mindcrack.Settings" />
-        </activity>
+            android:label="@string/about_title" />
         
         <receiver 
             android:name="com.edaviessmith.mindcrack.AlarmBroadcastReceiver"

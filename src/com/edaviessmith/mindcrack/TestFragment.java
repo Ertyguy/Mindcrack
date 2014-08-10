@@ -1,14 +1,14 @@
 package com.edaviessmith.mindcrack;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.edaviessmith.mindcrack.R;
 
-import com.actionbarsherlock.app.SherlockFragment;
 
-
-public class TestFragment extends SherlockFragment {
+public class TestFragment extends Fragment {
 	 //private String mContent = "???";
 	 private static String KEY_TAB_NUM;
      

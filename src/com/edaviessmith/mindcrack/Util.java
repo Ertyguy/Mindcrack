@@ -1,6 +1,8 @@
 package com.edaviessmith.mindcrack;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -9,25 +11,53 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.edaviessmith.mindcrack.R;
 
 
 public class Util{
 	
-	
-	
-	public static void setIndex(int id, int index) {
-		AppInstance.getMindcrackers().get(id).setSort(index);
+	public static int getPixels(int unit, float size) {
+	    DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+	    return (int)TypedValue.applyDimension(unit, size, metrics);
 	}
-	
+	 
 	public static String getTimeSince(long publishedDate) {
-     	String date;
+     	String date = "";
      	
      	if(publishedDate <= 0) {
+     		date = AppInstance.getContext().getResources().getString(R.string.loading_date);
+     	} else {
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(publishedDate*1000);
+			
+			Calendar now = Calendar.getInstance();
+			SimpleDateFormat s;
+			if(cal.get(Calendar.YEAR) == now.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)) {
+				date = "Today at ";
+				s =  new SimpleDateFormat("h:mm a", Locale.getDefault());
+			} else {
+				if(cal.get(Calendar.YEAR) == now.get(Calendar.YEAR) && ((cal.get(Calendar.DAY_OF_YEAR))+1) == now.get(Calendar.DAY_OF_YEAR)) {
+					return "Yesterday";
+				}
+				s = new SimpleDateFormat("MMMM d", Locale.getDefault());
+				
+			}
+			date += s.format(publishedDate*1000);
+     	}
+		return date;
+    	
+
+     	
+     	
+     	/*if(publishedDate <= 0) {
      		date = AppInstance.getContext().getResources().getString(R.string.loading_date);
      	} else {
 	     	Calendar calNow = Calendar.getInstance();
@@ -72,7 +102,7 @@ public class Util{
 	     	}
      	}
      	
-		return date;	
+		return date;*/	
 	}
 	
 	
@@ -278,6 +308,13 @@ public class Util{
 	/*public static boolean stringNotNullOrEmpty(String s) {
 		return s != null && s.length() > 0;
 	}*/
+	
+	public static int getPhoneWidth() {
+		DisplayMetrics metrics = AppInstance.getContext().getResources().getDisplayMetrics();
+		return metrics.widthPixels;
+		
+		
+	}
 	
 	public static boolean isDeviceTablet(){
 		return (AppInstance.getContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK)

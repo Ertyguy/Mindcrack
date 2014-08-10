@@ -23,6 +23,7 @@ import com.edaviessmith.mindcrack.data.Member;
 import com.edaviessmith.mindcrack.data.YoutubeItem;
 import com.edaviessmith.mindcrack.db.MemberORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
+import com.edaviessmith.mindcrack.R;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -117,7 +118,7 @@ public class MemberActivityService extends IntentService   {
 			String text = "New upload from "+updatedMembers.get(0).getName();
 			
 			
-			Intent intent = new Intent(this, Members.class);
+			Intent intent = new Intent(this, Hub.class);
 			
 			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 	        intent.putExtra(Constants.PREF_MEMBER, updatedMembers.get(0).getId());
@@ -136,7 +137,7 @@ public class MemberActivityService extends IntentService   {
 	        for(int i = 1; i < updatedMembers.size() && i<= 3; i++) {
 	        	Member mem = updatedMembers.get(i);
 	        	
-	        	Intent in = new Intent(this, Members.class);
+	        	Intent in = new Intent(this, Hub.class);
 	        	in.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 		        in.putExtra(Constants.PREF_MEMBER, mem.id);
 		        
