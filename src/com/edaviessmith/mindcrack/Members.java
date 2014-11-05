@@ -1,6 +1,7 @@
 package com.edaviessmith.mindcrack;
 
 import java.util.List;
+import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -33,8 +35,8 @@ import com.edaviessmith.mindcrack.db.MemberORM;
 import com.edaviessmith.mindcrack.db.RedditORM;
 import com.edaviessmith.mindcrack.db.TwitterORM;
 import com.edaviessmith.mindcrack.db.YoutubeItemORM;
-import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.SlidingTabLayout;
+import com.edaviessmith.mindcrack.util.SwitchFragmentListener;
 
 
 public class Members extends ActionBarActivity {
@@ -89,6 +91,9 @@ public class Members extends ActionBarActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        //TODO optionally use actionbar to show tabs 
+        //getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
         navDrawerToggle.syncState();
         
         left_drawer = (RelativeLayout) findViewById(R.id.left_drawer);
@@ -100,11 +105,16 @@ public class Members extends ActionBarActivity {
     	member_list.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             	//view.setSelected(true);
+            	boolean updateViewPager = false;
+            	if(getMember() == null)  updateViewPager = true;
+		    		
 	            Member member = (Member) member_list.getItemAtPosition(position);
 	            setMember(member.getId());
 	            
-	            fragmentPagerAdapter.update();
-				fragmentPagerAdapter.notifyDataSetChanged();
+	            if(updateViewPager) refreshViewPager();
+	            //TODO update member
+	            //fragmentPagerAdapter.openYoutube();
+				//fragmentPagerAdapter.notifyDataSetChanged();
 				navDrawerLayout.closeDrawer(left_drawer);
             }
         });
@@ -115,10 +125,18 @@ public class Members extends ActionBarActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent redditIntent = new Intent(Members.this, Reddit.class);
-		    	startActivity(redditIntent);
-		    	
-				/*setMember(-1);
+				//Intent redditIntent = new Intent(Members.this, Reddit.class);
+		    	//startActivity(redditIntent);
+
+            	boolean updateViewPager = false;
+            	if(getMember() != null)  updateViewPager = true;
+            	 
+				setMember(-1);
+				
+				if(updateViewPager) refreshViewPager();
+				//fragmentPagerAdapter.openReddit();
+				navDrawerLayout.closeDrawer(left_drawer);
+				/*
 				fragmentPagerAdapter.update();
 				fragmentPagerAdapter.notifyDataSetChanged();
 				navDrawerLayout.closeDrawer(left_drawer);*/
@@ -130,12 +148,8 @@ public class Members extends ActionBarActivity {
         // F R A G M E N T   P A G E R //
         
         //isReddit = false;
-        fragmentPagerAdapter = new FragPagerAdapter(getSupportFragmentManager(), this);
-        
-        viewPager = (ViewPager)findViewById(R.id.pager);
-        viewPager.setAdapter(fragmentPagerAdapter);
-		viewPager.getAdapter().notifyDataSetChanged();
-        
+        //viewPager = (ViewPager)findViewById(R.id.pager);
+        refreshViewPager();
         pagerTitleStrip = (SlidingTabLayout)findViewById(R.id.pager_tab_strip);
         pagerTitleStrip.setViewPager(viewPager);
         
@@ -145,6 +159,18 @@ public class Members extends ActionBarActivity {
         Util.startAlarm();	
 	}
 	
+	
+	private void refreshViewPager() {
+		
+		fragmentPagerAdapter = new FragPagerAdapter(getSupportFragmentManager(), Members.this, (getMember() != null? 0:1));
+		viewPager = (ViewPager)findViewById(R.id.pager);
+		viewPager.removeAllViews();
+		viewPager.setAdapter(fragmentPagerAdapter);
+		viewPager.getAdapter().notifyDataSetChanged();
+		
+		
+	
+	}
 	
 	@Override
 	public void onStop() {
@@ -156,7 +182,7 @@ public class Members extends ActionBarActivity {
 		@Override
 	public void onResume() {
 		super.onResume();
-		fragmentPagerAdapter.update();
+		//fragmentPagerAdapter.update();
 	}
 	
 
@@ -509,8 +535,89 @@ public class Members extends ActionBarActivity {
 
 	
 	
-	
-	
+    public class FragPagerAdapterBak extends FragmentPagerAdapter {
+    	private final String[] REDDIT_TABS = new String[] { "Reddit", "Post" };
+		private final String[] MEMBER_TABS = new String[] { "Youtube", "Twitter" };
+		
+        static final int NUM_ITEMS = 2;
+        private final FragmentManager mFragmentManager;
+        //private Fragment mFragmentAtPos0;
+        Members act;
+        int state;
+
+        public FragPagerAdapterBak(FragmentManager fm, Members activity, int state)
+        {
+            super(fm);
+            mFragmentManager = fm;
+            act = activity;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+        	if(state == 0) {
+	            if (position == 0) 
+	                return YoutubeFragment.newInstance(act);
+	            else
+	                return TwitterFragment.newInstance(act);
+        	} else {
+	    		switch (position) {
+	    		case 0:
+	    			return RedditFragment.newInstance();
+	    		}
+	    	}
+
+	        return TestFragment.newInstance(String.valueOf(position)); //This should never happen
+        }
+
+        @Override
+        public int getCount()
+        {
+            return NUM_ITEMS;
+        }
+/*
+        @Override
+        public int getItemPosition(Object object)
+        {
+            if ((object instanceof YoutubeFragment && mFragmentAtPos0 instanceof RedditFragment) ||
+            		(object instanceof RedditFragment && mFragmentAtPos0 instanceof YoutubeFragment))
+                return POSITION_NONE;
+            return POSITION_UNCHANGED;
+        }*/
+        /*
+        public void openReddit() {
+        	
+        	if(!(mFragmentAtPos0 instanceof RedditFragment)) {
+	        	mFragmentManager.beginTransaction().remove(mFragmentAtPos0).commit();
+	            mFragmentAtPos0 = RedditFragment.newInstance();
+	            notifyDataSetChanged();
+        	}
+        }
+        
+        public void openYoutube() {
+        	
+        	if(!(mFragmentAtPos0 instanceof YoutubeFragment)) {
+        		
+        		mFragmentManager.beginTransaction().remove(mFragmentAtPos0).commit();
+	            mFragmentAtPos0 = YoutubeFragment.newInstance(act);
+	            notifyDataSetChanged();
+        	}
+        }*/
+        
+
+	    @Override
+	    public CharSequence getPageTitle(int position) {
+	    	//if(getMember() != null) {
+	    		return MEMBER_TABS[position];
+	    	//} else {
+	    	//	return REDDIT_TABS[position];
+	    	//}
+	    }
+    }
+
+    
+    
+    
+	//TODO check detach
 	class FragPagerAdapter extends FragmentStatePagerAdapter {
 		private final String[] REDDIT_TABS = new String[] { "Reddit", "Post" };
 		private final String[] MEMBER_TABS = new String[] { "Youtube", "Twitter" };
@@ -521,23 +628,25 @@ public class Members extends ActionBarActivity {
 	    TwitterFragment twitterFragment;
 	    RedditFragment redditFragment;
 	    Members act;
+	    int state;
 	    
-	    public FragPagerAdapter(FragmentManager fm, Members activity) {
+	    public FragPagerAdapter(FragmentManager fm, Members activity, int state) {
 	        super(fm);	
 	        act = activity;
+	        this.state = state;
 	    }
 	    
 	    @Override
 	    public Fragment getItem(int position) {
 	    	pos = position;
 	    	Log.d("FragPagerAdapter","get item called: "+position);
-	    	if(getMember() != null) {
+	    	if(state == 0) {
 		    	switch (position) {
 		    		case 0:
 		    	 		youtubeFragment = YoutubeFragment.newInstance(act);
 		    	 		return youtubeFragment;
 		    	 	case 1:
-		    	 		twitterFragment = TwitterFragment.newInstance();
+		    	 		twitterFragment = TwitterFragment.newInstance(act);
 		    	 		return twitterFragment;
 		    	}
 	    	} else {
@@ -555,8 +664,8 @@ public class Members extends ActionBarActivity {
 	    public void update() {
 	    	Log.d("FragPagerAdapter","update called: "+pos);
 	    	if(getMember() != null) {
-	    		if(youtubeFragment != null) youtubeFragment.update(); else youtubeFragment = YoutubeFragment.newInstance(act);
-	    		if(twitterFragment != null) twitterFragment.update(); else twitterFragment = TwitterFragment.newInstance();
+	    		//if(youtubeFragment != null) youtubeFragment.update(); else youtubeFragment = YoutubeFragment.newInstance(act);
+	    		//if(twitterFragment != null) twitterFragment.update(); else twitterFragment = TwitterFragment.newInstance();
 		    	/*switch (pos) {
 		    		case 0:
 		    	 		youtubeFragment.update();
@@ -566,7 +675,7 @@ public class Members extends ActionBarActivity {
 	    	} else {
 	    		//switch (pos) {
 	    		//case 0:
-	    			if(redditFragment != null) redditFragment.update(); else redditFragment = RedditFragment.newInstance();
+	    			//if(redditFragment != null) redditFragment.update(); else redditFragment = RedditFragment.newInstance();
 	    		//}
 	    	}
 	    }
@@ -578,21 +687,22 @@ public class Members extends ActionBarActivity {
 	    
 	    @Override
 	    public CharSequence getPageTitle(int position) {
-	    	if(getMember() != null) {
+	    	if(state == 0) {
 	    		return MEMBER_TABS[position];
 	    	} else {
 	    		return REDDIT_TABS[position];
 	    	}
 	    }
+	     
 	    
 	   // @Override public int getItemPosition (Object object) { return POSITION_NONE; }
-	    
+	    /*
 	    @Override
 	    public void unregisterDataSetObserver(DataSetObserver observer) {
 	        if (observer != null) {
 	            super.unregisterDataSetObserver(observer);
 	        }
-	    }
+	    }*/
 	}
 		
     

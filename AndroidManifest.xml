@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.edaviessmith.mindcrack"
-    android:versionCode="12"
-    android:versionName="1.9.1" >
+    android:versionCode="13"
+    android:versionName="2.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme">
         
         <activity
-            android:name="com.edaviessmith.mindcrack.Hub"
+            android:name="com.edaviessmith.mindcrack.Members"
             android:label="@string/mindcrack" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,18 +35,10 @@
         </activity>
         
         <activity
-            android:name="com.edaviessmith.mindcrack.YoutubeFragment"
-            android:label="@string/youtube_title" />
-        
-        <activity
             android:name="com.edaviessmith.mindcrack.YoutubePlayer"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/youtube_title" />
         
-        <activity
-            android:name="com.edaviessmith.mindcrack.TwitterFragment"
-            android:label="@string/twitter_title" >
-        </activity>
         
         <activity
             android:name="com.edaviessmith.mindcrack.Settings"

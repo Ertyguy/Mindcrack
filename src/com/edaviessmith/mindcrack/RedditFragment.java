@@ -37,11 +37,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edaviessmith.mindcrack.data.Post;
-import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.ImageLoader;
-import com.edaviessmith.mindcrack.util.MediaFragment;
 import com.edaviessmith.mindcrack.util.RemoteData;
 import com.edaviessmith.mindcrack.util.ResizableImageView;
+import com.edaviessmith.mindcrack.util.SwitchFragmentListener;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -54,7 +53,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
 
-public class RedditFragment extends Fragment implements MediaFragment {
+public class RedditFragment extends Fragment implements SwitchFragmentListener {
 	
 	private static String TAG = "RedditFragment";
 	
@@ -625,7 +624,7 @@ public class RedditFragment extends Fragment implements MediaFragment {
 
 
 	@Override
-	public void update() {
+	public void onSwitchToNextFragment() {
 		// TODO Auto-generated method stub
 		
 	}

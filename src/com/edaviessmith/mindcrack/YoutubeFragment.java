@@ -34,10 +34,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edaviessmith.mindcrack.data.YoutubeItem;
-import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.ImageLoader;
-import com.edaviessmith.mindcrack.util.MediaFragment;
 import com.edaviessmith.mindcrack.util.ResizableImageView;
+import com.edaviessmith.mindcrack.util.SwitchFragmentListener;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -50,7 +49,7 @@ import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 
 
-public class YoutubeFragment extends Fragment implements MediaFragment{
+public class YoutubeFragment extends Fragment{
 
 	private static String TAG = "YoutubeFragment";
 	
@@ -87,12 +86,6 @@ public class YoutubeFragment extends Fragment implements MediaFragment{
 	    return youtubeFragment;
 	}
 
-
-	@Override
-	public void update() {
-		Log.d(TAG, "update");
-		createFragment();
-	}
 	
 	private void createFragment() {
 

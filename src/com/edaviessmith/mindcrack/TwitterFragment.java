@@ -38,12 +38,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edaviessmith.mindcrack.data.Tweet;
-import com.edaviessmith.mindcrack.R;
-import com.edaviessmith.mindcrack.util.MediaFragment;
 import com.edaviessmith.mindcrack.util.ResizableImageView;
+import com.edaviessmith.mindcrack.util.SwitchFragmentListener;
 
 
-public class TwitterFragment extends Fragment implements MediaFragment{
+public class TwitterFragment extends Fragment implements SwitchFragmentListener{
 	
 	private static String TAG = "TwitterFragment";
 	
@@ -69,11 +68,12 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 	private TwitterFactory twitterFactory = null;
     private Twitter twitter;
     private ConfigurationBuilder configurationBuilder;
-	    
+	private static Members act;
     
     
-	public static TwitterFragment newInstance() {
+	public static TwitterFragment newInstance(Members activity) {
 		TwitterFragment fragment = new TwitterFragment();
+		act = activity;
         return fragment;
     }
 
@@ -111,15 +111,15 @@ public class TwitterFragment extends Fragment implements MediaFragment{
     	super.onActivityCreated(savedInstanceState);
     	Log.d(TAG, "fragment onActivityCreated");
     	
-    	boolean changedMember = !AppInstance.checkSetTwitterMemberIdIsCurrent();
+    	boolean changedMember = !act.checkSetTwitterMemberIdIsCurrent();
     	
 		if(changedMember) {
 			Log.e(TAG, "member is changed");
-			AppInstance.twitterPageToken = 1;
+			act.twitterPageToken = 1;
     		beginningOfList = true;
 			
 
-			tweetList = new ArrayList<Tweet>(AppInstance.getTwitterFeed());
+			tweetList = new ArrayList<Tweet>(act.getTwitterFeed());
 	    	// Add loading Tweet
 	    	tweetList.add(tweetList.size(), loading);
 	    		    	
@@ -130,14 +130,14 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 			 	}
 			}
 	    	
-	    	AppInstance.isTwitterFeedUpToDate = false;
+	    	act.isTwitterFeedUpToDate = false;
 	    	
 	    	if (isNeededTwitterAuth()) {
 	             new TwitterAuthenticateTask(this).execute();
 	        }
 	        else
 	        {
-	        	new TwitterFeed(TwitterFragment.this, AppInstance.getCurrentTwitterMemberId()).execute(AppInstance.getMember().getTwitterId());
+	        	new TwitterFeed(TwitterFragment.this, act.getCurrentTwitterMemberId()).execute(act.getMember().getTwitterId());
 	        }
 	    	
 	        
@@ -154,7 +154,7 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 		
     	
 		if(tweetList == null) {
-			tweetList = new ArrayList<Tweet>(AppInstance.getTwitterFeed());
+			tweetList = new ArrayList<Tweet>(act.getTwitterFeed());
 	    	// Add loading Tweet
 	    	tweetList.add(tweetList.size(), loading);
 	    	
@@ -165,13 +165,13 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 			 	}
 			}
 	    	
-	    	AppInstance.isTwitterFeedUpToDate = false;
+	    	act.isTwitterFeedUpToDate = false;
 	    	if (isNeededTwitterAuth()) {
 	             new TwitterAuthenticateTask(this).execute();
 	        }
 	        else
 	        {
-	        	new TwitterFeed(TwitterFragment.this, AppInstance.getCurrentTwitterMemberId()).execute(AppInstance.getMember().getTwitterId());
+	        	new TwitterFeed(TwitterFragment.this, act.getCurrentTwitterMemberId()).execute(act.getMember().getTwitterId());
 	        }	    		   
 		}
     	
@@ -203,21 +203,21 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 	
 	                if(view.getLastVisiblePosition() >= totalItemCount - 5){
 	                	
-	                	if(!searchBusy && !waitingToSearch  && AppInstance.twitterPageToken != 0) {
+	                	if(!searchBusy && !waitingToSearch  && act.twitterPageToken != 0) {
 	            			
-	            			if(beginningOfList && AppInstance.twitterPageToken == 1) {
+	            			if(beginningOfList && act.twitterPageToken == 1) {
 	            	    		listView.setSelection(0);
 	            	    		Log.d(TAG,"Scroll to the top of the list");
 	            	    	}
 	            			Log.d(TAG,"Trigger to search for new items");
-	            			new TwitterFeed(TwitterFragment.this, AppInstance.getCurrentTwitterMemberId()).execute(AppInstance.getMember().getTwitterId());
+	            			new TwitterFeed(TwitterFragment.this, act.getCurrentTwitterMemberId()).execute(act.getMember().getTwitterId());
 	            			endOfList = false;
 	            			
-	            		} else if(searchBusy && AppInstance.twitterPageToken == 1) {
+	            		} else if(searchBusy && act.twitterPageToken == 1) {
 	            			waitingToSearch = true;
 	            			
-	            		} else if (AppInstance.twitterPageToken == 0 && !endOfList){
-	            			Toast.makeText(context, "No more uploads found for "+AppInstance.getMember().getName(), Toast.LENGTH_SHORT).show();
+	            		} else if (act.twitterPageToken == 0 && !endOfList){
+	            			Toast.makeText(context, "No more uploads found for "+act.getMember().getName(), Toast.LENGTH_SHORT).show();
 	            			adapter.removeProgressBar();
 	            			endOfList = true;		
 	            		}
@@ -376,7 +376,7 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 		if(twitterFeed != null) {
 			List<Tweet> tweets = new ArrayList<Tweet>();
 			int index = 0;
-			int memberId = AppInstance.getMember().getId();
+			int memberId = act.getMember().getId();
 			for(twitter4j.Status tweet : twitterFeed) {
 				if(tweet != null) {
 					try {
@@ -400,7 +400,7 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 			
 			//Only save the first page of YoutubeItems
 	        if(beginningOfList) {
-	        	AppInstance.updateTwitterFeed(tweets);
+	        	act.updateTwitterFeed(tweets);
 	        	beginningOfList = false;
 	        	Log.d(TAG, "adding items to updateYoutubeItems");
 	        } else {
@@ -411,13 +411,13 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 	        	
 	        	
 	        // If the records in the database are not up to date
-	        if(!AppInstance.isTwitterFeedUpToDate) {
+	        if(!act.isTwitterFeedUpToDate) {
 	        	adapter.clearItems(); //Clear all items currently in the adapter
 	        	
 	        	for(Tweet item : tweets) {
 	        		adapter.add(item);
 				}
-	        	AppInstance.isTwitterFeedUpToDate = true;
+	        	act.isTwitterFeedUpToDate = true;
 	        }
 	        
 	        
@@ -426,8 +426,8 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 			//Used if you scroll to the end of the list before the first result is returned
 			if(waitingToSearch) {
 				
-				if(AppInstance.twitterPageToken != 0) {
-        			new TwitterFeed(TwitterFragment.this, AppInstance.getCurrentTwitterMemberId()).execute(AppInstance.getMember().getTwitterId());
+				if(act.twitterPageToken != 0) {
+        			new TwitterFeed(TwitterFragment.this, act.getCurrentTwitterMemberId()).execute(act.getMember().getTwitterId());
         			endOfList = false;
         		} 
 				waitingToSearch = false;
@@ -458,7 +458,7 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 	    @Override
 	    protected Void doInBackground(String... params) {
 
-	    	twitterFeed = getRecentTwitterFeed(params[0], AppInstance.twitterPageToken);
+	    	twitterFeed = getRecentTwitterFeed(params[0], act.twitterPageToken);
 	    	
 			return null;
 	    }  
@@ -482,14 +482,14 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 		    	try {
 		    		twitter.setOAuth2Token(new OAuth2Token(twitterTokenType, twitterAccesToken));
 		    		
-		    		if(AppInstance.getMember().getId() == this.currentMemberId) {
+		    		if(act.getMember().getId() == this.currentMemberId) {
 		    			
 		    			ResponseList<twitter4j.Status> response = twitter.getUserTimeline(playlistId, new Paging(pageToken, 20));
 		    			if(response == null || response.size() == 0) 
-		    				AppInstance.twitterPageToken = 0;
+		    				act.twitterPageToken = 0;
 		    			else
-		    				AppInstance.twitterPageToken ++;
-		    			Log.e(TAG, "token: "+AppInstance.twitterPageToken);
+		    				act.twitterPageToken ++;
+		    			Log.e(TAG, "token: "+act.twitterPageToken);
 		    			return response;
 		    		}
 		        } catch (Exception e) {
@@ -542,7 +542,7 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 		    	settings.putString(Constants.PREF_TW_TOKEN_TYPE, bearerToken.getTokenType());
 		    	settings.commit();
 		    	
-		    	new TwitterFeed(TwitterFragment.this, AppInstance.getCurrentTwitterMemberId()).execute(AppInstance.getMember().getTwitterId());
+		    	new TwitterFeed(TwitterFragment.this, act.getCurrentTwitterMemberId()).execute(act.getMember().getTwitterId());
 	    	}
 	    }
 	 
@@ -563,8 +563,10 @@ public class TwitterFragment extends Fragment implements MediaFragment{
 
 
 
+
+
 	@Override
-	public void update() {
+	public void onSwitchToNextFragment() {
 		// TODO Auto-generated method stub
 		
 	}

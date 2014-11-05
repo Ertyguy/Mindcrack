@@ -37,7 +37,7 @@ import com.edaviessmith.mindcrack.R;
 import com.edaviessmith.mindcrack.util.SlidingTabLayout;
 
 
-public class Reddit extends ActionBarActivity {
+public class Reddit {/*extends ActionBarActivity {
 	public static String TAG = "Reddit";
 
 	FragPagerAdapter fragmentPagerAdapter;
@@ -529,9 +529,9 @@ public class Reddit extends ActionBarActivity {
 		    		case 0:
 		    			redditFragment = RedditFragment.newInstance();
 		    	 		return redditFragment;
-		    	 	/*case 1:
+		    	 	case 1:
 		    	 		twitterFragment = TwitterFragment.newInstance();
-		    	 		return twitterFragment;*/
+		    	 		return twitterFragment;
 		    	}
 	    	} 
 	    	
@@ -573,5 +573,5 @@ public class Reddit extends ActionBarActivity {
 	}
 		
     
-
+*/
 }
